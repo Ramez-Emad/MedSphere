@@ -5,6 +5,10 @@ VisualStudioVersion = 17.14.36429.23 d17.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MedSphere.PL", "MedSphere.PL\MedSphere.PL.csproj", "{48D8512D-6706-4250-877E-D52BCEF09492}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MedSphere.DAL", "MedSphere.DAL\MedSphere.DAL.csproj", "{C8FBAC5C-8CB6-4B90-B01F-9320153AA567}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MedSphere.BLL", "MedSphere.BLL\MedSphere.BLL.csproj", "{279183F9-7F46-4C39-AEA7-5E150ABB4D41}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +19,14 @@ Global
 		{48D8512D-6706-4250-877E-D52BCEF09492}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{48D8512D-6706-4250-877E-D52BCEF09492}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{48D8512D-6706-4250-877E-D52BCEF09492}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C8FBAC5C-8CB6-4B90-B01F-9320153AA567}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C8FBAC5C-8CB6-4B90-B01F-9320153AA567}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C8FBAC5C-8CB6-4B90-B01F-9320153AA567}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C8FBAC5C-8CB6-4B90-B01F-9320153AA567}.Release|Any CPU.Build.0 = Release|Any CPU
+		{279183F9-7F46-4C39-AEA7-5E150ABB4D41}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{279183F9-7F46-4C39-AEA7-5E150ABB4D41}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{279183F9-7F46-4C39-AEA7-5E150ABB4D41}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{279183F9-7F46-4C39-AEA7-5E150ABB4D41}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
