@@ -1,0 +1,6 @@
+@MedSphere.PL_HostAddress = http://localhost:5116
+
+GET {{MedSphere.PL_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
