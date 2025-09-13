@@ -1,4 +1,5 @@
-﻿using MedSphere.DAL.Entities.Medicine;
+﻿
+using MedSphere.DAL.Entities.MedicineEntities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;

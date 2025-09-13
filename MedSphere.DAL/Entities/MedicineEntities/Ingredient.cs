@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace MedSphere.DAL.Entities.Medicine;
+﻿namespace MedSphere.DAL.Entities.MedicineEntities;
 public class Ingredient : AuditableEntity
 {
     public int Id { get; set; }
