@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MedSphere.DAL.Entities.Medicine;
 
-public class Medicine
+public class Medicine : AuditableEntity
 {
     public int Id { get; set; }
 

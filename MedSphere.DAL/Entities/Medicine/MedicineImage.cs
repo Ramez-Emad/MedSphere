@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace MedSphere.DAL.Entities.Medicine;
-public class MedicineImage
+public class MedicineImage : AuditableEntity
 {
     public int Id { get; set; }
     public string ImageUrl { get; set; } = default!;
