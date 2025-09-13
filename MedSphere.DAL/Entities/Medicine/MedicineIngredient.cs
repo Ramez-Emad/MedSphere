@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace MedSphere.DAL.Entities.Medicine;
-public class MedicineIngredient
+public class MedicineIngredient : AuditableEntity
 {
     public int MedicineId { get; set; }
     public Medicine Medicine { get; set; } = default!;
