@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace MedSphere.DAL.Entities.Medicine;
+namespace MedSphere.DAL.Entities.MedicineEntities;
 
 public class Medicine : AuditableEntity
 {

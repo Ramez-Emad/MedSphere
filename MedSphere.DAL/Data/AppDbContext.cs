@@ -1,10 +1,5 @@
-﻿using MedSphere.DAL.Entities.Medicine;
+﻿using MedSphere.DAL.Entities.MedicineEntities;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MedSphere.DAL.Data;
 public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
