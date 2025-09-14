@@ -1,9 +1,6 @@
-﻿using MedSphere.DAL.Entities;
-using MedSphere.DAL.Entities.MedicineEntities;
-using Microsoft.IdentityModel.Tokens;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 
-namespace MedSphere.DAL.Repositories._GenericRepo
+namespace MedSphere.DAL.Repositories._Generic
 {
     public interface IGenericRepository <TEntity> where TEntity : class
     {

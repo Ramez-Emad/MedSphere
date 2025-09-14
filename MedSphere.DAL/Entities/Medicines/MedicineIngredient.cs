@@ -1,4 +1,4 @@
-﻿namespace MedSphere.DAL.Entities.MedicineEntities;
+﻿namespace MedSphere.DAL.Entities.Medicines;
 public class MedicineIngredient : AuditableEntity
 {
     public int MedicineId { get; set; }

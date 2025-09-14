@@ -1,8 +1,8 @@
-﻿using MedSphere.DAL.Entities.MedicineEntities;
-using MedSphere.DAL.Repositories.MedicineRepo;
+﻿using MedSphere.DAL.Entities.Medicines;
+using MedSphere.DAL.Repositories.Medicines;
 using System.Linq.Expressions;
 
-namespace MedSphere.BLL.Services.MedicineServices
+namespace MedSphere.BLL.Services.Medicines
 {
   
     public class MedicineService(IMedicineRepository _medicineRepository) : IMedicineService
