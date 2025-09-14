@@ -19,7 +19,7 @@ namespace MedSphere.DAL.Repositories._Generic
             _dbContext.Set<TEntity>().Remove(entity);
         }
 
-        public async Task<IEnumerable<TEntity>> GetAllAsync(bool WithTracking = false, Expression<Func<TEntity, bool>> filter = null, CancellationToken cancellationToken = default)
+        public async Task<IEnumerable<TEntity>> GetAllAsync(bool WithTracking = false, Expression<Func<TEntity, bool>>? filter = null, CancellationToken cancellationToken = default)
         {
             IQueryable<TEntity> query = _dbContext.Set<TEntity>();
 
@@ -41,10 +41,7 @@ namespace MedSphere.DAL.Repositories._Generic
         }
 
         public async Task<TEntity?> GetByIdAsync<TKey>(TKey id, CancellationToken cancellationToken = default)
-        {
-            return await _dbContext.Set<TEntity>().FindAsync(id, cancellationToken);
-
-        }
+             => await _dbContext.Set<TEntity>().FindAsync([id], cancellationToken);
 
         public async Task<int> SaveChangesAsync(CancellationToken cancellationToken=default)
         {

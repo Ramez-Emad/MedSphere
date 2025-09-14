@@ -7,7 +7,7 @@ namespace MedSphere.BLL.Services.Medicines
   
     public class MedicineService(IMedicineRepository _medicineRepository) : IMedicineService
     {
-        public async Task<IEnumerable<Medicine>> GetAllMedicinesAsync(bool WithTracking = false, Expression<Func<Medicine, bool>> filter = null, CancellationToken cancellationToken = default)
+        public async Task<IEnumerable<Medicine>> GetAllMedicinesAsync(bool WithTracking = false, Expression<Func<Medicine, bool>>? filter = null, CancellationToken cancellationToken = default)
         {
             return await _medicineRepository.GetAllAsync(WithTracking, filter, cancellationToken);
         }

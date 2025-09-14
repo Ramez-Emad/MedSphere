@@ -4,7 +4,7 @@ using MedSphere.DAL.Repositories._Generic;
 
 namespace MedSphere.DAL.Repositories.Medicines
 {
-    public class MedicineRepository(AppDbContext _dbContext) : GenericRepository<Medicine> (_dbContext),  IMedicineRepository
+    public class MedicineRepository(AppDbContext _dbContext) : GenericRepository<Medicine> (_dbContext), IMedicineRepository
     {
        
     }
