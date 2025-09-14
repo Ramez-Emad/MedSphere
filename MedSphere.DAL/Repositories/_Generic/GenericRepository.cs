@@ -1,56 +1,62 @@
 ﻿using MedSphere.DAL.Data;
-using MedSphere.DAL.Entities.Medicines;
+using MedSphere.DAL.Entities;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
-using System.Linq.Expressions;
 
 namespace MedSphere.DAL.Repositories._Generic
 {
-    public class GenericRepository<TEntity>(AppDbContext _dbContext) : IGenericRepository<TEntity> where TEntity : class
+    public class GenericRepository<TEntity>(AppDbContext _dbContext) : IGenericRepository<TEntity> where TEntity : BaseEntity
     {
-        public async Task AddAsync(TEntity entity, CancellationToken cancellationToken=default)
-        {
-            await _dbContext.Set<TEntity>().AddAsync(entity, cancellationToken);
 
-        }
-
-        public void Delete(TEntity entity)
-        {
-            _dbContext.Set<TEntity>().Remove(entity);
-        }
-
-        public async Task<IEnumerable<TEntity>> GetAllAsync(bool WithTracking = false, Expression<Func<TEntity, bool>>? filter = null, CancellationToken cancellationToken = default)
+        #region GetAll
+        public async Task<IEnumerable<TEntity>> GetAllAsync(bool withTracking = false, bool withDeleted = false, CancellationToken cancellationToken = default)
         {
             IQueryable<TEntity> query = _dbContext.Set<TEntity>();
 
-            
-            if (filter is not null)
-                query = query.Where(filter);
+            if (!withDeleted)
+                query = query.Where(E => !E.IsDeleted);
 
-            if (!WithTracking)
+            if (!withTracking)
                 query = query.AsNoTracking();
 
             return await query.ToListAsync(cancellationToken);
         }
 
-        public async Task<TEntity?> GetAsync(Expression<Func<TEntity, bool>> filter, CancellationToken cancellationToken=default)
+        #endregion
+
+        #region GetById
+        public async Task<TEntity?> GetByIdAsync<TKey>(TKey id, bool withDeleted = false, CancellationToken cancellationToken = default)
         {
-            return await _dbContext.Set<TEntity>()
-                                   .Where(filter)
-                                   .FirstOrDefaultAsync(cancellationToken);
+            var entity = await _dbContext.Set<TEntity>().FindAsync([id], cancellationToken);
+            if (entity is null || (!withDeleted && entity.IsDeleted))
+                return null;
+
+            return entity;
         }
+        #endregion
+        
+        #region Add 
+        public async Task AddAsync(TEntity entity, CancellationToken cancellationToken = default)
+            => await _dbContext.Set<TEntity>().AddAsync(entity, cancellationToken);
 
-        public async Task<TEntity?> GetByIdAsync<TKey>(TKey id, CancellationToken cancellationToken = default)
-             => await _dbContext.Set<TEntity>().FindAsync([id], cancellationToken);
+        #endregion
 
-        public async Task<int> SaveChangesAsync(CancellationToken cancellationToken=default)
-        {
-            return await _dbContext.SaveChangesAsync(cancellationToken); 
-        }
-
+        #region Update
         public void Update(TEntity entity)
-        {
-            _dbContext.Update(entity);
-        }
+            => _dbContext.Update(entity); 
+
+        #endregion
+       
+        #region Delete
+        public void Delete(TEntity entity)
+            => _dbContext.Set<TEntity>().Remove(entity);
+
+        #endregion
+       
+        #region Save Changes
+        public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+           => await _dbContext.SaveChangesAsync(cancellationToken);
+
+        #endregion
+
     }
 }

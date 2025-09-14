@@ -1,13 +1,12 @@
-﻿using System.Linq.Expressions;
+﻿using MedSphere.DAL.Entities;
 
 namespace MedSphere.DAL.Repositories._Generic
 {
-    public interface IGenericRepository <TEntity> where TEntity : class
+    public interface IGenericRepository <TEntity> where TEntity : BaseEntity
     {
-        Task<IEnumerable<TEntity>> GetAllAsync(bool WithTracking = false, Expression<Func<TEntity, bool>>? filter = null, CancellationToken cancellationToken = default );
+        Task<IEnumerable<TEntity>> GetAllAsync(bool withTracking = false, bool withDeleted = false,  CancellationToken cancellationToken = default );
 
-        Task<TEntity?> GetAsync(Expression<Func<TEntity, bool>> filter, CancellationToken cancellationToken=default);
-        Task<TEntity?> GetByIdAsync<TKey> (TKey id, CancellationToken cancellationToken=default);
+        Task<TEntity?> GetByIdAsync<TKey> (TKey id, bool withDeleted = false, CancellationToken cancellationToken=default);
 
         Task AddAsync(TEntity entity, CancellationToken cancellationToken=default);
 
