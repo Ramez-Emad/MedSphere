@@ -4,7 +4,7 @@ namespace MedSphere.DAL.Repositories._Generic
 {
     public interface IGenericRepository <TEntity> where TEntity : class
     {
-        Task<IEnumerable<TEntity>> GetAllAsync(bool WithTracking = false, Expression<Func<TEntity, bool>> filter = null!, CancellationToken cancellationToken = default );
+        Task<IEnumerable<TEntity>> GetAllAsync(bool WithTracking = false, Expression<Func<TEntity, bool>>? filter = null, CancellationToken cancellationToken = default );
 
         Task<TEntity?> GetAsync(Expression<Func<TEntity, bool>> filter, CancellationToken cancellationToken=default);
         Task<TEntity?> GetByIdAsync<TKey> (TKey id, CancellationToken cancellationToken=default);
