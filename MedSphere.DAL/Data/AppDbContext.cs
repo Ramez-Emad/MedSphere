@@ -1,4 +1,4 @@
-﻿using MedSphere.DAL.Entities.MedicineEntities;
+﻿using MedSphere.DAL.Entities.Medicines;
 using Microsoft.EntityFrameworkCore;
 
 namespace MedSphere.DAL.Data;

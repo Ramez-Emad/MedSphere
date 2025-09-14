@@ -1,7 +1,7 @@
-﻿using MedSphere.DAL.Entities.MedicineEntities;
+﻿using MedSphere.DAL.Entities.Medicines;
 using System.Linq.Expressions;
 
-namespace MedSphere.BLL.Services.MedicineServices
+namespace MedSphere.BLL.Services.Medicines
 {
     public interface IMedicineService
     {

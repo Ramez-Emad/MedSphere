@@ -1,5 +1,5 @@
 using MedSphere.DAL.Data;
-using MedSphere.DAL.Repositories.MedicineRepo;
+using MedSphere.DAL.Repositories.Medicines;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);

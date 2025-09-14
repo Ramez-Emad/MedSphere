@@ -1,10 +1,10 @@
 ﻿using MedSphere.DAL.Data;
-using MedSphere.DAL.Entities.MedicineEntities;
+using MedSphere.DAL.Entities.Medicines;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Linq.Expressions;
 
-namespace MedSphere.DAL.Repositories._GenericRepo
+namespace MedSphere.DAL.Repositories._Generic
 {
     public class GenericRepository<TEntity>(AppDbContext _dbContext) : IGenericRepository<TEntity> where TEntity : class
     {
