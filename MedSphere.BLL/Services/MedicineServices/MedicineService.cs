@@ -33,7 +33,11 @@ namespace MedSphere.BLL.Services.MedicineServices
             entity.IsDeleted = true;
             _medicineRepository.Update(entity);
             return await _medicineRepository.SaveChangesAsync(cancellationToken);
-        }     
+        }
 
+        public async Task<Medicine?> GetMedicineByIdAsync(int id, CancellationToken cancellationToken = default)
+        {
+            return await _medicineRepository.GetByIdAsync(id, cancellationToken);
+        }
     }
 }

@@ -40,6 +40,12 @@ namespace MedSphere.DAL.Repositories._GenericRepo
                                    .FirstOrDefaultAsync(cancellationToken);
         }
 
+        public async Task<TEntity?> GetByIdAsync<TKey>(TKey id, CancellationToken cancellationToken = default)
+        {
+            return await _dbContext.Set<TEntity>().FindAsync(id, cancellationToken);
+
+        }
+
         public async Task<int> SaveChangesAsync(CancellationToken cancellationToken=default)
         {
             return await _dbContext.SaveChangesAsync(cancellationToken); 
