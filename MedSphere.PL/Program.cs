@@ -1,3 +1,4 @@
+using MedSphere.BLL.Services.Medicines;
 using MedSphere.DAL.Data;
 using MedSphere.DAL.Repositories.Medicines;
 using Microsoft.EntityFrameworkCore;
@@ -15,6 +16,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     );
 
 builder.Services.AddScoped<IMedicineRepository, MedicineRepository>();
+builder.Services.AddScoped<IMedicineService,  MedicineService>();   
 
 
 

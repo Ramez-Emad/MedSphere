@@ -26,7 +26,7 @@ namespace MedSphere.DAL.Repositories._Generic
         #region GetById
         public async Task<TEntity?> GetByIdAsync<TKey>(TKey id, bool withDeleted = false, CancellationToken cancellationToken = default)
         {
-            var entity = await _dbContext.Set<TEntity>().FindAsync([id], cancellationToken);
+            var entity = await _dbContext.Set<TEntity>().FindAsync(new object?[] { id }, cancellationToken);
             if (entity is null || (!withDeleted && entity.IsDeleted))
                 return null;
 

@@ -7,37 +7,54 @@ namespace MedSphere.BLL.Services.Medicines
   
     public class MedicineService(IMedicineRepository _medicineRepository) : IMedicineService
     {
-        public async Task<IEnumerable<Medicine>> GetAllMedicinesAsync(bool WithTracking = false, Expression<Func<Medicine, bool>>? filter = null, CancellationToken cancellationToken = default)
-        {
-            return await _medicineRepository.GetAllAsync(WithTracking, filter, cancellationToken);
-        }
+        #region GetAll
+        public async Task<IEnumerable<Medicine>> GetAllAsync(bool WithTracking = false, bool withDeleted = false, CancellationToken cancellationToken = default)
+            => await _medicineRepository.GetAllAsync(WithTracking, withDeleted, cancellationToken);
 
-        public async Task<Medicine?> GetMedicineAsync(Expression<Func<Medicine, bool>> filter, CancellationToken cancellationToken = default)
-        {
-            
-            return await _medicineRepository.GetAsync(filter, cancellationToken);
-        }
-        public async Task<int> AddMedicineAsync(Medicine entity, CancellationToken cancellationToken = default)
+        #endregion
+
+        #region GetById
+        public async Task<Medicine?> GetByIdAsync(int id, bool withDeleted = false, CancellationToken cancellationToken = default)
+            => await _medicineRepository.GetByIdAsync(id, withDeleted, cancellationToken);
+
+        #endregion
+
+        #region Add
+        public async Task<int> AddAsync(Medicine entity, CancellationToken cancellationToken = default)
         {
             await _medicineRepository.AddAsync(entity, cancellationToken);
             return await _medicineRepository.SaveChangesAsync(cancellationToken);
         }
-        public async Task<int> UpdateMedicine(Medicine entity, CancellationToken cancellationToken = default)
+        #endregion
+        
+        #region Update
+        public async Task<int> Update(int id, Medicine entity, CancellationToken cancellationToken = default)
         {
-            _medicineRepository.Update(entity);
+            var medicine = await _medicineRepository.GetByIdAsync(id, false, cancellationToken);
+
+            if (medicine == null)
+                return 0;
+
+          
+            // Not Completed 
+            medicine.Name = entity.Name;
+            medicine.UpdatedOn = DateTime.UtcNow;
+
             return await _medicineRepository.SaveChangesAsync(cancellationToken);
         }
+        #endregion
 
-        public async Task<int> DeleteMedicine(Medicine entity, CancellationToken cancellationToken = default)
+        #region Delete
+        public async Task<int> Delete(int id, CancellationToken cancellationToken = default)
         {
+            var entity = await _medicineRepository.GetByIdAsync(id);
+            if (entity == null)
+                return 0;
+
             entity.IsDeleted = true;
-            _medicineRepository.Update(entity);
             return await _medicineRepository.SaveChangesAsync(cancellationToken);
         }
 
-        public async Task<Medicine?> GetMedicineByIdAsync(int id, CancellationToken cancellationToken = default)
-        {
-            return await _medicineRepository.GetByIdAsync(id, cancellationToken);
-        }
+        #endregion
     }
 }
