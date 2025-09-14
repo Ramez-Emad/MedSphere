@@ -1,21 +1,12 @@
 ﻿using MedSphere.DAL.Entities.MedicineEntities;
+using MedSphere.DAL.Repositories._GenericRepo;
 using System.Linq.Expressions;
 
 namespace MedSphere.DAL.Repositories.MedicineRepo
 {
-    public interface IMedicineRepository
+    public interface IMedicineRepository : IGenericRepository<Medicine>
     {
-        Task<IEnumerable<Medicine>> GetAllMedicinesAsync (bool WithTracking = false, Expression<Func<Medicine, bool>> filter = null!);
         
-        Task<Medicine?> GetMedicineAsync (Expression<Func<Medicine, bool>> filter);
-        
-        Task AddMedicineAsync (Medicine entity);
-        
-        void UpdateMedicine (Medicine entity);
-        
-        void DeleteMedicine (Medicine entity);
-        
-        Task<int> SaveChangesAsync();
 
     }
 }
