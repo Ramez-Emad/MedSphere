@@ -1,9 +1,7 @@
 using FluentValidation;
-using FluentValidation.AspNetCore;
 using Mapster;
 using MapsterMapper;
 using MedSphere.BLL;
-using MedSphere.BLL.Contracts.Medicines;
 using MedSphere.BLL.Mapping;
 using MedSphere.BLL.Services.Medicines;
 using MedSphere.DAL.Data;
@@ -39,8 +37,8 @@ builder.Services.AddScoped<IMapper, ServiceMapper>();
 #region Validator Service
 
 builder.Services.AddValidatorsFromAssemblyContaining<ReferenceAssembly>();
-builder.Services.AddFluentValidationAutoValidation();
-builder.Services.AddFluentValidationClientsideAdapters();
+//builder.Services.AddFluentValidationAutoValidation();
+//builder.Services.AddFluentValidationClientsideAdapters();
 
 #endregion
 
