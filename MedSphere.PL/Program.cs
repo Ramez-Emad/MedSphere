@@ -38,7 +38,7 @@ builder.Services.AddScoped<IMapper, ServiceMapper>();
 
 #region Validator Service
 
-builder.Services.AddValidatorsFromAssemblyContaining<ReferenceAssembly>();
+builder.Services.AddValidatorsFromAssemblyContaining<FluentValidationAssemblyReference>();
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddFluentValidationClientsideAdapters();
 
