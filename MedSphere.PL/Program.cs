@@ -4,8 +4,10 @@ using Mapster;
 using MapsterMapper;
 using MedSphere.BLL;
 using MedSphere.BLL.Mapping;
+using MedSphere.BLL.Services.Ingredients;
 using MedSphere.BLL.Services.Medicines;
 using MedSphere.DAL.Data;
+using MedSphere.DAL.Repositories.Ingredients;
 using MedSphere.DAL.Repositories.Medicines;
 using Microsoft.EntityFrameworkCore;
 
@@ -28,6 +30,9 @@ options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnectio
 #region Repositories & Services
 builder.Services.AddScoped<IMedicineRepository, MedicineRepository>();
 builder.Services.AddScoped<IMedicineService, MedicineService>(); 
+
+builder.Services.AddScoped<IIngredientRepository, IngredientRepository>();
+builder.Services.AddScoped<IIngredientService, IngredientService>();
 #endregion
 
 #region Mapper Service
