@@ -1,43 +1,74 @@
-﻿using MedSphere.DAL.Entities.Medicines;
+﻿using MapsterMapper;
+using MedSphere.BLL.Contracts.Medicines;
+using MedSphere.DAL.Entities.Medicines;
 using MedSphere.DAL.Repositories.Medicines;
-using System.Linq.Expressions;
 
 namespace MedSphere.BLL.Services.Medicines
 {
   
-    public class MedicineService(IMedicineRepository _medicineRepository) : IMedicineService
+    public class MedicineService(IMedicineRepository _medicineRepository, IMapper _mapper) : IMedicineService
     {
-        public async Task<IEnumerable<Medicine>> GetAllMedicinesAsync(bool WithTracking = false, Expression<Func<Medicine, bool>>? filter = null, CancellationToken cancellationToken = default)
+        #region GetAll
+        public async Task<IEnumerable<MedicineResponse>> GetAllAsync(bool WithTracking = false, bool withDeleted = false, CancellationToken cancellationToken = default)
         {
-            return await _medicineRepository.GetAllAsync(WithTracking, filter, cancellationToken);
+            var medicines = await _medicineRepository.GetAllAsync(WithTracking, withDeleted, cancellationToken);
+            //return medicines.Adapt<IEnumerable<MedicineResponse>>();
+            return _mapper.Map<IEnumerable<MedicineResponse>>(medicines); 
+        }
+        #endregion
+
+        #region GetById
+        public async Task<MedicineResponse?> GetByIdAsync(int id, bool withDeleted = false, CancellationToken cancellationToken = default)
+        {
+            var medicine = await _medicineRepository.GetByIdAsync(id, withDeleted, cancellationToken);
+            if (medicine == null) 
+                return null;
+            //return medicine.Adapt<MedicineResponse>();
+            return _mapper.Map<MedicineResponse>(medicine);
         }
 
-        public async Task<Medicine?> GetMedicineAsync(Expression<Func<Medicine, bool>> filter, CancellationToken cancellationToken = default)
+        #endregion
+
+        #region Add
+        public async Task<MedicineResponse> AddAsync(MedicineRequest entity, CancellationToken cancellationToken = default)
         {
+            //var medicine = entity.Adapt<Medicine>();
+            var medicine = _mapper.Map<Medicine>(entity);
             
-            return await _medicineRepository.GetAsync(filter, cancellationToken);
-        }
-        public async Task<int> AddMedicineAsync(Medicine entity, CancellationToken cancellationToken = default)
-        {
-            await _medicineRepository.AddAsync(entity, cancellationToken);
-            return await _medicineRepository.SaveChangesAsync(cancellationToken);
-        }
-        public async Task<int> UpdateMedicine(Medicine entity, CancellationToken cancellationToken = default)
-        {
-            _medicineRepository.Update(entity);
-            return await _medicineRepository.SaveChangesAsync(cancellationToken);
-        }
+            await _medicineRepository.AddAsync(medicine, cancellationToken);
+            await _medicineRepository.SaveChangesAsync(cancellationToken);
 
-        public async Task<int> DeleteMedicine(Medicine entity, CancellationToken cancellationToken = default)
+            return _mapper.Map<MedicineResponse>(medicine);
+        }
+        #endregion
+        
+        #region Update
+        public async Task<int> Update(int id, MedicineRequest entity, CancellationToken cancellationToken = default)
         {
+            var medicine = await _medicineRepository.GetByIdAsync(id, false, cancellationToken);
+
+            if (medicine == null)
+                return -1;
+
+            //entity.Adapt(medicine);
+            _mapper.Map(entity, medicine); 
+            medicine.UpdatedOn = DateTime.UtcNow;
+
+            return await _medicineRepository.SaveChangesAsync(cancellationToken);
+        }
+        #endregion
+
+        #region Delete
+        public async Task<bool> Delete(int id, CancellationToken cancellationToken = default)
+        {
+            var entity = await _medicineRepository.GetByIdAsync(id, false, cancellationToken);
+            if (entity == null)
+                return false;
+
             entity.IsDeleted = true;
-            _medicineRepository.Update(entity);
-            return await _medicineRepository.SaveChangesAsync(cancellationToken);
+            return await _medicineRepository.SaveChangesAsync(cancellationToken) > 0 ;
         }
 
-        public async Task<Medicine?> GetMedicineByIdAsync(int id, CancellationToken cancellationToken = default)
-        {
-            return await _medicineRepository.GetByIdAsync(id, cancellationToken);
-        }
+        #endregion
     }
 }

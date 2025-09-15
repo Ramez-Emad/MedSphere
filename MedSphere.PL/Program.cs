@@ -1,3 +1,11 @@
+using FluentValidation;
+using FluentValidation.AspNetCore;
+using Mapster;
+using MapsterMapper;
+using MedSphere.BLL;
+using MedSphere.BLL.Contracts.Medicines;
+using MedSphere.BLL.Mapping;
+using MedSphere.BLL.Services.Medicines;
 using MedSphere.DAL.Data;
 using MedSphere.DAL.Repositories.Medicines;
 using Microsoft.EntityFrameworkCore;
@@ -14,9 +22,27 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
     );
 
+
 builder.Services.AddScoped<IMedicineRepository, MedicineRepository>();
+builder.Services.AddScoped<IMedicineService,  MedicineService>();
 
+#region Mapper Service
 
+var config = TypeAdapterConfig.GlobalSettings;
+config.Scan(typeof(MappingConfig).Assembly);
+
+builder.Services.AddSingleton(config);
+builder.Services.AddScoped<IMapper, ServiceMapper>();
+
+#endregion
+
+#region Validator Service
+
+builder.Services.AddValidatorsFromAssemblyContaining<FluentValidationAssemblyReference>();
+builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddFluentValidationClientsideAdapters();
+
+#endregion
 
 var app = builder.Build();
 
