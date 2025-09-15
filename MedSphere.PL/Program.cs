@@ -3,7 +3,6 @@ using FluentValidation.AspNetCore;
 using Mapster;
 using MapsterMapper;
 using MedSphere.BLL;
-using MedSphere.BLL.Contracts.Medicines;
 using MedSphere.BLL.Mapping;
 using MedSphere.BLL.Services.Medicines;
 using MedSphere.DAL.Data;
@@ -18,13 +17,18 @@ builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
+#region DbContext
+
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
-    );
+options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
+); 
 
+#endregion
 
+#region Repositories & Services
 builder.Services.AddScoped<IMedicineRepository, MedicineRepository>();
-builder.Services.AddScoped<IMedicineService,  MedicineService>();
+builder.Services.AddScoped<IMedicineService, MedicineService>(); 
+#endregion
 
 #region Mapper Service
 
@@ -43,6 +47,7 @@ builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddFluentValidationClientsideAdapters();
 
 #endregion
+
 
 var app = builder.Build();
 
