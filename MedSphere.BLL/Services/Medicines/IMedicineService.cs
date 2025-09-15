@@ -8,11 +8,11 @@ namespace MedSphere.BLL.Services.Medicines
 
         Task<MedicineResponse?> GetByIdAsync(int id, bool withDeleted = false, CancellationToken cancellationToken = default);
 
-        Task<int> AddAsync(MedicineRequest entity, CancellationToken cancellationToken = default);
+        Task<MedicineResponse> AddAsync(MedicineRequest entity, CancellationToken cancellationToken = default);
 
         Task<int> Update(int id,MedicineRequest entity, CancellationToken cancellationToken = default);
 
-        Task<int> Delete(int id, CancellationToken cancellationToken = default);
+        Task<bool> Delete(int id, CancellationToken cancellationToken = default);
 
     }
 }

@@ -1,5 +1,4 @@
-﻿using Mapster;
-using MapsterMapper;
+﻿using MapsterMapper;
 using MedSphere.BLL.Contracts.Medicines;
 using MedSphere.DAL.Entities.Medicines;
 using MedSphere.DAL.Repositories.Medicines;
@@ -22,6 +21,8 @@ namespace MedSphere.BLL.Services.Medicines
         public async Task<MedicineResponse?> GetByIdAsync(int id, bool withDeleted = false, CancellationToken cancellationToken = default)
         {
             var medicine = await _medicineRepository.GetByIdAsync(id, withDeleted, cancellationToken);
+            if (medicine == null) 
+                return null;
             //return medicine.Adapt<MedicineResponse>();
             return _mapper.Map<MedicineResponse>(medicine);
         }
@@ -29,12 +30,15 @@ namespace MedSphere.BLL.Services.Medicines
         #endregion
 
         #region Add
-        public async Task<int> AddAsync(MedicineRequest entity, CancellationToken cancellationToken = default)
+        public async Task<MedicineResponse> AddAsync(MedicineRequest entity, CancellationToken cancellationToken = default)
         {
             //var medicine = entity.Adapt<Medicine>();
-            var medicine = _mapper.Map<Medicine>(entity); 
+            var medicine = _mapper.Map<Medicine>(entity);
+            
             await _medicineRepository.AddAsync(medicine, cancellationToken);
-            return await _medicineRepository.SaveChangesAsync(cancellationToken);
+            await _medicineRepository.SaveChangesAsync(cancellationToken);
+
+            return _mapper.Map<MedicineResponse>(medicine);
         }
         #endregion
         
@@ -44,12 +48,10 @@ namespace MedSphere.BLL.Services.Medicines
             var medicine = await _medicineRepository.GetByIdAsync(id, false, cancellationToken);
 
             if (medicine == null)
-                return 0;
+                return -1;
 
             //entity.Adapt(medicine);
             _mapper.Map(entity, medicine); 
-
-
             medicine.UpdatedOn = DateTime.UtcNow;
 
             return await _medicineRepository.SaveChangesAsync(cancellationToken);
@@ -57,14 +59,14 @@ namespace MedSphere.BLL.Services.Medicines
         #endregion
 
         #region Delete
-        public async Task<int> Delete(int id, CancellationToken cancellationToken = default)
+        public async Task<bool> Delete(int id, CancellationToken cancellationToken = default)
         {
             var entity = await _medicineRepository.GetByIdAsync(id, false, cancellationToken);
             if (entity == null)
-                return 0;
+                return false;
 
             entity.IsDeleted = true;
-            return await _medicineRepository.SaveChangesAsync(cancellationToken);
+            return await _medicineRepository.SaveChangesAsync(cancellationToken) > 0 ;
         }
 
         #endregion

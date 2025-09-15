@@ -2,6 +2,7 @@
 {
     public class MedicineRequest
     {
+        public int Id { get; set; }
         public string Name { get; set; } = default!;
 
         public string DosageForm { get; set; } = default!;
