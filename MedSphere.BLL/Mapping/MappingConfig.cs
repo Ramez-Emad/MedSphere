@@ -8,10 +8,7 @@ namespace MedSphere.BLL.Mapping
     {
         public void Register(TypeAdapterConfig config)
         {
-            config.NewConfig<Medicine, MedicineResponse>();
 
-            config.NewConfig<MedicineRequest, Medicine>()
-                  .Ignore(destination => destination.Id) ;
         }
     }
 }
