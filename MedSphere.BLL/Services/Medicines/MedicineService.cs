@@ -52,7 +52,6 @@ namespace MedSphere.BLL.Services.Medicines
 
             //entity.Adapt(medicine);
             _mapper.Map(entity, medicine); 
-            medicine.UpdatedOn = DateTime.UtcNow;
 
             return await _medicineRepository.SaveChangesAsync(cancellationToken);
         }
