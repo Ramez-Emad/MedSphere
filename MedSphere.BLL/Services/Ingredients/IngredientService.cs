@@ -57,8 +57,6 @@ public class IngredientService(IIngredientRepository _ingredientRepository) : II
 
         entity.Adapt(ingredient);
 
-        ingredient.UpdatedOn = DateTime.UtcNow;
-
         return await _ingredientRepository.SaveChangesAsync(cancellationToken);
     }
     #endregion
