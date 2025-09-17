@@ -26,7 +26,6 @@ options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnectio
 ); 
 
 #endregion
-// hi 
 
 #region Repositories & Services
 builder.Services.AddScoped<IMedicineRepository, MedicineRepository>();
