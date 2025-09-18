@@ -10,6 +10,8 @@ namespace MedSphere.DAL.Repositories._Generic
 
         Task AddAsync(TEntity entity, CancellationToken cancellationToken=default);
 
+        Task AddAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken=default);
+
         void Update(TEntity entity);
 
         void Delete(TEntity entity);

@@ -66,6 +66,12 @@ namespace MedSphere.BLL.Contracts.Medicines
                 .InclusiveBetween(0, 100)
                 .WithMessage("Shelf life must be Between(0, 100)");
 
+            RuleFor(x => x.Ingredients)
+                .NotEmpty()
+                .WithMessage("Ingredients list cannot be empty.")
+                .Must( x => x.Distinct().Count() == x.Count)
+                .WithMessage("Ingredients list contains duplicate items.");
+
         }
     }
 }

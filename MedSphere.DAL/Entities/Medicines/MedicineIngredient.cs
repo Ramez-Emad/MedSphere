@@ -5,5 +5,5 @@ public class MedicineIngredient : AuditableEntity
     public Medicine Medicine { get; set; } = default!;
     public int IngredientId { get; set; }
     public Ingredient Ingredient { get; set; } = default!;
-    public string? Strength { get; set; }
+    public int? StrengthMg { get; set; }
 }

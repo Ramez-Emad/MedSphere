@@ -38,6 +38,9 @@ namespace MedSphere.DAL.Repositories._Generic
         public async Task AddAsync(TEntity entity, CancellationToken cancellationToken = default)
             => await _dbContext.Set<TEntity>().AddAsync(entity, cancellationToken);
 
+        public async Task AddAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
+            => await _dbContext.Set<TEntity>().AddRangeAsync(entities, cancellationToken);
+
         #endregion
 
         #region Update

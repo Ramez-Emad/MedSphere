@@ -5,7 +5,8 @@ namespace MedSphere.DAL.Repositories.Medicines
 {
     public interface IMedicineRepository : IGenericRepository<Medicine>
     {
-        
+
+        public Task<Medicine?> GetByIdAsync (int id, bool withDeleted, CancellationToken cancellationToken );
 
     }
 }

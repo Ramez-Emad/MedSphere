@@ -46,7 +46,6 @@ public class Medicine : AuditableEntity
     [MaxLength(100)]
     public string? BarcodeOrQRCode { get; set; }
 
-
     public ICollection<MedicineImage> MedicineImages { get; set; } = new HashSet<MedicineImage>();
 
     public ICollection<MedicineIngredient> MedicineIngredients { get; set; } = new HashSet<MedicineIngredient>();
