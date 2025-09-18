@@ -1,5 +1,4 @@
 using FluentValidation;
-using FluentValidation.AspNetCore;
 using Mapster;
 using MapsterMapper;
 using MedSphere.BLL;
@@ -10,12 +9,14 @@ using MedSphere.DAL.Data;
 using MedSphere.DAL.Repositories.Ingredients;
 using MedSphere.DAL.Repositories.Medicines;
 using Microsoft.EntityFrameworkCore;
+using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
+
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
@@ -26,9 +27,6 @@ options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnectio
 );
 
 #endregion
-
-builder.Services.AddHttpContextAccessor();
-
 
 #region Repositories & Services
 builder.Services.AddScoped<IMedicineRepository, MedicineRepository>();
@@ -51,8 +49,6 @@ builder.Services.AddScoped<IMapper, ServiceMapper>();
 #region Validator Service
 
 builder.Services.AddValidatorsFromAssemblyContaining<FluentValidationAssemblyReference>();
-builder.Services.AddFluentValidationAutoValidation();
-builder.Services.AddFluentValidationClientsideAdapters();
 
 #endregion
 
@@ -63,6 +59,8 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.MapScalarApiReference();
+
 }
 
 app.UseHttpsRedirection();
