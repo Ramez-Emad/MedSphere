@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Http;
 
 
 namespace MedSphere.DAL.Data;
-public class AppDbContext(DbContextOptions<AppDbContext> options, IHttpContextAccessor httpContextAccessor) : DbContext(options)
+public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
 {
     public DbSet<Medicine> Medicines { get; set; }
     public DbSet<Ingredient> Ingredients { get; set; }
