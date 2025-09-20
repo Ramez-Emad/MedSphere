@@ -1,6 +1,4 @@
-﻿using Azure.Core;
-using Mapster;
-using MapsterMapper;
+﻿using Mapster;
 using MedSphere.BLL.Contracts.MedicineIngredients;
 using MedSphere.BLL.Contracts.Medicines;
 using MedSphere.DAL.Entities.Medicines;

@@ -41,7 +41,6 @@ public class IngredientsController(IIngredientService _ingredientService) : Cont
             return BadRequest(result.Errors);
         }
 
-
         var created = await _ingredientService.AddAsync(ingredient);
 
         return CreatedAtAction(nameof(Get), new { id = created.Id }, created);
@@ -79,3 +78,6 @@ public class IngredientsController(IIngredientService _ingredientService) : Cont
     }
     #endregion
 }
+
+
+  

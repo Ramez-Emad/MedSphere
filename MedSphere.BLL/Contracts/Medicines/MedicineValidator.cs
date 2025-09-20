@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using MedSphere.BLL.Contracts.MedicineIngredients;
 
 namespace MedSphere.BLL.Contracts.Medicines
 {
@@ -69,8 +70,12 @@ namespace MedSphere.BLL.Contracts.Medicines
             RuleFor(x => x.Ingredients)
                 .NotEmpty()
                 .WithMessage("Ingredients list cannot be empty.")
-                .Must( x => x.Distinct().Count() == x.Count)
+                .Must(x => x.Distinct().Count() == x.Count)
                 .WithMessage("Ingredients list contains duplicate items.");
+
+
+            RuleForEach(x => x.Ingredients)
+                    .SetValidator(new MedicineIngredientValidator());
 
         }
     }
