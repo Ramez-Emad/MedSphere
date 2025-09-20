@@ -1,4 +1,8 @@
-﻿namespace MedSphere.BLL.Contracts.Medicines
+﻿using MedSphere.BLL.Contracts.Ingredients;
+using MedSphere.BLL.Contracts.MedicineIngredients;
+using MedSphere.DAL.Entities.Medicines;
+
+namespace MedSphere.BLL.Contracts.Medicines
 {
     public class MedicineRequest
     {
@@ -33,6 +37,8 @@
         public string? Contraindications { get; set; }
 
         public string? BarcodeOrQRCode { get; set; }
+
+        public List<MedicineIngredientRequest> Ingredients { get; set; } = default!;
 
     }
 }

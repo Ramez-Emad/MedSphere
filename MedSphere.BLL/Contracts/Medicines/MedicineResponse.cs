@@ -1,4 +1,6 @@
-﻿namespace MedSphere.BLL.Contracts.Medicines
+﻿using MedSphere.BLL.Contracts.MedicineIngredients;
+
+namespace MedSphere.BLL.Contracts.Medicines
 {
     public class MedicineResponse
 
@@ -35,6 +37,8 @@
         public string? Contraindications { get; set; }
 
         public string? BarcodeOrQRCode { get; set; }
+
+        public List<MedicineIngredientResponse> Ingredients { get; set; } = default!;
 
     }
 }

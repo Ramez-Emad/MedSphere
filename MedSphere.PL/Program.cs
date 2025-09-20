@@ -7,6 +7,7 @@ using MedSphere.BLL.Services.Ingredients;
 using MedSphere.BLL.Services.Medicines;
 using MedSphere.DAL.Data;
 using MedSphere.DAL.Repositories.Ingredients;
+using MedSphere.DAL.Repositories.MedicineIngredients;
 using MedSphere.DAL.Repositories.Medicines;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
@@ -34,6 +35,8 @@ builder.Services.AddScoped<IMedicineService, MedicineService>();
 
 builder.Services.AddScoped<IIngredientRepository, IngredientRepository>();
 builder.Services.AddScoped<IIngredientService, IngredientService>();
+
+builder.Services.AddScoped<IMedicineIngredientRepository, MedicineIngredientRepository>();
 #endregion
 
 #region Mapper Service

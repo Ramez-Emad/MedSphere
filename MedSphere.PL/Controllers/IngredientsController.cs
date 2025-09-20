@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace MedSphere.PL.Controllers;
 [Route("api/[controller]")]
 [ApiController]
-public class IngredientController(IIngredientService _ingredientService) : ControllerBase
+public class IngredientsController(IIngredientService _ingredientService) : ControllerBase
 {
     #region GetAll
 
