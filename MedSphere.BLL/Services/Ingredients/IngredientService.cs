@@ -1,6 +1,8 @@
 ﻿using Mapster;
+using MedSphere.BLL.Abstractions;
 using MedSphere.BLL.Contracts.Ingredients;
 using MedSphere.BLL.Contracts.Medicines;
+using MedSphere.BLL.Errors.Ingredients;
 using MedSphere.DAL.Entities.Medicines;
 using MedSphere.DAL.Repositories.Ingredients;
 using System;
@@ -25,51 +27,62 @@ public class IngredientService(IIngredientRepository _ingredientRepository) : II
     #endregion
 
     #region GetById
-    public async Task<IngredientResponse?> GetByIdAsync(int id, bool withDeleted = false, CancellationToken cancellationToken = default)
+    public async Task<Result<IngredientResponse?>> GetByIdAsync(int id, bool withDeleted = false, CancellationToken cancellationToken = default)
     {
-        var medicine = await _ingredientRepository.GetByIdAsync(id, withDeleted, cancellationToken);
-        if (medicine == null)
-            return null;
-        return medicine.Adapt<IngredientResponse>();
+        var ingredient = await _ingredientRepository.GetByIdAsync(id, withDeleted, cancellationToken);
+
+        if (ingredient == null)
+            return Result.Failure<IngredientResponse?>(IngredientsErrors.IngredientNotFound);
+
+        return Result.Success<IngredientResponse?>(ingredient.Adapt<IngredientResponse>());
     }
 
     #endregion
 
     #region Add
-    public async Task<IngredientResponse> AddAsync(IngredientRequest entity, CancellationToken cancellationToken = default)
+    public async Task<Result<IngredientResponse>> AddAsync(IngredientRequest entity, CancellationToken cancellationToken = default)
     {
+
+        if (await _ingredientRepository.IsIngredientNameExists(entity.Name, cancellationToken))
+            return Result.Failure<IngredientResponse>(IngredientsErrors.IngredientNameAlreadyExists);
+
         var ingredient = entity.Adapt<Ingredient>();
 
         await _ingredientRepository.AddAsync(ingredient, cancellationToken);
         await _ingredientRepository.SaveChangesAsync(cancellationToken);
 
-        return ingredient.Adapt<IngredientResponse>();
+        return Result.Success(ingredient.Adapt<IngredientResponse>());
     }
     #endregion
 
     #region Update
-    public async Task<int> Update(int id, IngredientRequest entity, CancellationToken cancellationToken = default)
+    public async Task<Result> Update(int id, IngredientRequest entity, CancellationToken cancellationToken = default)
     {
         var ingredient = await _ingredientRepository.GetByIdAsync(id, false, cancellationToken);
 
         if (ingredient == null)
-            return -1;
+            return Result.Failure(IngredientsErrors.IngredientNotFound);
 
         entity.Adapt(ingredient);
 
-        return await _ingredientRepository.SaveChangesAsync(cancellationToken);
+        await _ingredientRepository.SaveChangesAsync(cancellationToken);
+
+        return Result.Success();
     }
     #endregion
 
     #region Delete
-    public async Task<bool> Delete(int id, CancellationToken cancellationToken = default)
+    public async Task<Result> Delete(int id, CancellationToken cancellationToken = default)
     {
         var entity = await _ingredientRepository.GetByIdAsync(id, false, cancellationToken);
+
         if (entity == null)
-            return false;
+            return Result.Failure(IngredientsErrors.IngredientNotFound);
 
         entity.IsDeleted = true;
-        return await _ingredientRepository.SaveChangesAsync(cancellationToken) > 0;
+        await _ingredientRepository.SaveChangesAsync(cancellationToken);
+
+        return Result.Success();
     }
 
     #endregion

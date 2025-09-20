@@ -3,6 +3,7 @@ using MedSphere.BLL.Contracts.Medicines;
 using MedSphere.BLL.Services.Ingredients;
 using MedSphere.DAL.Entities.Medicines;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MedSphere.PL.Controllers;
@@ -24,7 +25,11 @@ public class IngredientsController(IIngredientService _ingredientService) : Cont
     [HttpGet("{id}")]
     public async Task<ActionResult> Get(int id)
     {
-        return Ok(await _ingredientService.GetByIdAsync(id));
+        var result = await _ingredientService.GetByIdAsync(id);
+
+        return result.IsSuccess
+                     ? Ok(result.Value)
+                     : BadRequest(result.Error);
     }
 
     #endregion
@@ -33,18 +38,11 @@ public class IngredientsController(IIngredientService _ingredientService) : Cont
     [HttpPost]
     public async Task<ActionResult> Create(IngredientRequest ingredient)
     {
-        var validator = new IngredientValidator();
-        var result = validator.Validate(ingredient);
+        var result = await _ingredientService.AddAsync(ingredient);
 
-        if (!result.IsValid)
-        {
-            return BadRequest(result.Errors);
-        }
-
-        var created = await _ingredientService.AddAsync(ingredient);
-
-        return CreatedAtAction(nameof(Get), new { id = created.Id }, created);
-
+        return result.IsSuccess
+                     ? CreatedAtAction(nameof(Get), new { id = result.Value.Id }, result.Value)
+                     : BadRequest(result.Error);
     }
 
     #endregion
@@ -54,17 +52,11 @@ public class IngredientsController(IIngredientService _ingredientService) : Cont
     [HttpPut("{id}")]
     public async Task<ActionResult> Edit(int id, IngredientRequest ingredient)
     {
-        var validator = new IngredientValidator();
-        var result = validator.Validate(ingredient);
+        var result = await _ingredientService.Update(id , ingredient);
 
-        if (!result.IsValid)
-        {
-            return BadRequest(result.Errors);
-        }
-
-        var res = await _ingredientService.Update(id , ingredient);
-
-        return NoContent();
+        return result.IsSuccess
+                     ? NoContent()
+                     : BadRequest(result.Error);
     }
     #endregion
 
@@ -72,8 +64,11 @@ public class IngredientsController(IIngredientService _ingredientService) : Cont
     [HttpDelete("{id}")]
     public async Task<ActionResult> Delete(int id)
     {
-        var res = await _ingredientService.Delete(id);
-        return NoContent();
+        var result = await _ingredientService.Delete(id);
+
+        return result.IsSuccess
+                    ? NoContent()
+                    : BadRequest(result.Error);
 
     }
     #endregion
