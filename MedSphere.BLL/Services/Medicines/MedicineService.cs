@@ -118,10 +118,7 @@ namespace MedSphere.BLL.Services.Medicines
 
             entity.Adapt(medicine);
 
-            var existingIngredients = await _medicineIngredientRepository.GetAllAsync();
-
-            existingIngredients = existingIngredients.Where(mi => mi.MedicineId == id).ToList();
-
+            var existingIngredients = await _medicineIngredientRepository.GetAllAsync(id , cancellationToken);
 
             var toBeDeleted = existingIngredients.Where(ei => 
                                                             !entity.Ingredients.Any(i => i.Id == ei.IngredientId) 
