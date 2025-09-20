@@ -40,7 +40,6 @@ namespace MedSphere.PL.Controllers
             {
                 return BadRequest(result.Errors);
             }
-
             
             var created = await _service.AddAsync(medicine);
 
