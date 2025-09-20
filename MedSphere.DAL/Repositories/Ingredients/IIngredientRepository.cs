@@ -9,4 +9,5 @@ using System.Threading.Tasks;
 namespace MedSphere.DAL.Repositories.Ingredients;
 public interface IIngredientRepository : IGenericRepository<Ingredient>
 {
+    Task<bool> IsIngredientNameExists(string name, CancellationToken cancellationToken = default);
 }
