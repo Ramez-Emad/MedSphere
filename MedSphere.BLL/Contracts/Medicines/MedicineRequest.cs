@@ -1,6 +1,4 @@
-﻿using MedSphere.BLL.Contracts.Ingredients;
-using MedSphere.BLL.Contracts.MedicineIngredients;
-using MedSphere.DAL.Entities.Medicines;
+﻿using MedSphere.BLL.Contracts.MedicineIngredients;
 
 namespace MedSphere.BLL.Contracts.Medicines
 {

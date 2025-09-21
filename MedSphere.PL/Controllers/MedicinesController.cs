@@ -23,8 +23,10 @@ namespace MedSphere.PL.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult> Get(int id)
         {
-            var medicine = await _service.GetByIdAsync(id);
-            return Ok(medicine);
+            var result = await _service.GetByIdAsync(id);
+            return result.IsSuccess
+                         ? Ok(result.Value)
+                         : BadRequest(result.Error);
         }
 
         #endregion
@@ -33,38 +35,42 @@ namespace MedSphere.PL.Controllers
         [HttpPost]
         public async Task<ActionResult> Create(MedicineRequest medicine)
         {
-            var validator = new MedicineValidator();
-            var result = validator.Validate(medicine);
+            //var validator = new MedicineValidator();
+            //var ValidationResult = validator.Validate(medicine);
 
-            if (!result.IsValid)
-            {
-                return BadRequest(result.Errors);
-            }
-            
-            var created = await _service.AddAsync(medicine);
+            //if (!ValidationResult.IsValid)
+            //{
+            //    return BadRequest(ValidationResult.Errors);
+            //}
 
-            return CreatedAtAction(nameof(Get), new { id = created.Id }, created);
-            
+            var result = await _service.AddAsync(medicine);
+
+            return result.IsSuccess
+                         ? CreatedAtAction(nameof(Get), new { id = result.Value.Id }, result.Value)
+                         : BadRequest(result.Error);
+
         }
 
         #endregion
-     
+
         #region Update
 
         [HttpPut("{id}")]
         public async Task<ActionResult> Edit(int id, MedicineRequest medicine)
         {
             var validator = new MedicineValidator();
-            var result = validator.Validate(medicine);
+            var ValidationResult = validator.Validate(medicine);
 
-            if (!result.IsValid)
+            if (!ValidationResult.IsValid)
             {
-                return BadRequest(result.Errors);
+                return BadRequest(ValidationResult.Errors);
             }
 
-            var res = await _service.Update(id, medicine);
+            var result = await _service.Update(id, medicine);
 
-            return NoContent();
+            return result.IsSuccess
+                         ? NoContent()
+                         : BadRequest(result.Error);
         }
         #endregion
 
@@ -72,8 +78,10 @@ namespace MedSphere.PL.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(int id)
         {
-            var res = await _service.Delete(id);
-            return NoContent();
+            var result = await _service.Delete(id);
+            return result.IsSuccess
+                         ? NoContent()
+                         : BadRequest(result.Error);
 
         }
         #endregion

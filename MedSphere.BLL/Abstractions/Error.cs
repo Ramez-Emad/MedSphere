@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace MedSphere.BLL.Abstractions;
+﻿namespace MedSphere.BLL.Abstractions;
 
 public record Error(string Code, string Description, int? StatusCode)
 {
