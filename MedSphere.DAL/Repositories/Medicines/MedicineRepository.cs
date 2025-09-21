@@ -13,6 +13,7 @@ namespace MedSphere.DAL.Repositories.Medicines
             _dbContext = dbContext;
         }
 
+        
         public  async Task<Medicine?> GetByIdAsync(int id, bool withDeleted = false, CancellationToken cancellationToken = default)
         {
             var entity = await _dbContext.Medicines

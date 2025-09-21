@@ -1,6 +1,9 @@
 ﻿using Mapster;
+using MedSphere.BLL.Abstractions;
 using MedSphere.BLL.Contracts.MedicineIngredients;
 using MedSphere.BLL.Contracts.Medicines;
+using MedSphere.BLL.Errors.Ingredients;
+using MedSphere.BLL.Errors.Medicines;
 using MedSphere.DAL.Entities.Medicines;
 using MedSphere.DAL.Repositories.Ingredients;
 using MedSphere.DAL.Repositories.MedicineIngredients;
@@ -8,44 +11,46 @@ using MedSphere.DAL.Repositories.Medicines;
 
 namespace MedSphere.BLL.Services.Medicines
 {
-  
-    public class MedicineService(IMedicineRepository _medicineRepository,  IMedicineIngredientRepository _medicineIngredientRepository  , IIngredientRepository _ingredientRepository) : IMedicineService
+
+    public class MedicineService(IMedicineRepository _medicineRepository, IMedicineIngredientRepository _medicineIngredientRepository, IIngredientRepository _ingredientRepository) : IMedicineService
     {
         #region GetAll
         public async Task<IEnumerable<MedicineResponse>> GetAllAsync(bool WithTracking = false, bool withDeleted = false, CancellationToken cancellationToken = default)
         {
             var medicines = await _medicineRepository.GetAllAsync(WithTracking, withDeleted, cancellationToken);
+           
             return medicines.Adapt<IEnumerable<MedicineResponse>>(); 
         }
         #endregion
 
         #region GetById
-        public async Task<MedicineResponse?> GetByIdAsync(int id, bool withDeleted = false, CancellationToken cancellationToken = default)
+        public async Task<Result<MedicineResponse>> GetByIdAsync(int id, bool withDeleted = false, CancellationToken cancellationToken = default)
         {
             var medicine = await _medicineRepository.GetByIdAsync(id, withDeleted, cancellationToken);
-            if (medicine == null) 
-                return null;
+
+            if (medicine == null)
+                return Result.Failure<MedicineResponse>(MedicineErrors.MedicineNotFound);
 
 
 
-            var result = medicine.Adapt<MedicineResponse>();
+            var medicineResponse = medicine.Adapt<MedicineResponse>();
 
             var ingredientDict = (await _ingredientRepository.GetAllAsync(cancellationToken: cancellationToken)).ToDictionary(i => i.Id, i => i.Name);
 
-            result.Ingredients = medicine.MedicineIngredients
+            medicineResponse.Ingredients = [.. medicine.MedicineIngredients
                                          .Select(mi => new MedicineIngredientResponse
                                          {
                                              Name = ingredientDict[mi.IngredientId],
                                              StrengthMg = mi.StrengthMg
-                                         })
-                                         .ToList();
-            return result;
+                                         })];
+
+            return Result.Success(medicineResponse);
         }
 
         #endregion
 
         #region Add
-        public async Task<MedicineResponse> AddAsync(MedicineRequest entity, CancellationToken cancellationToken = default)
+        public async Task<Result<MedicineResponse>> AddAsync(MedicineRequest entity, CancellationToken cancellationToken = default)
         {
 
             #region Check of Ingredients Ids
@@ -56,7 +61,7 @@ namespace MedSphere.BLL.Services.Medicines
 
             if (!givenIngredientIds.All(id => (existingIngredientIds.Contains(id))))
             {
-                throw new ArgumentException("One or more ingredient IDs do not exist.");
+                return Result.Failure<MedicineResponse>(IngredientsErrors.IngredientNotFound);
             }
 
             #endregion
@@ -85,56 +90,67 @@ namespace MedSphere.BLL.Services.Medicines
 
             #region Map to Response
 
-            var result = entity.Adapt<MedicineResponse>();
+            var medicineResponse = entity.Adapt<MedicineResponse>();
 
-            result.Id = medicine.Id;
+            medicineResponse.Id = medicine.Id;
 
             var ingredientDict = existingIngredient.ToDictionary(i => i.Id, i => i.Name);
 
-            result.Ingredients = entity.Ingredients
+            medicineResponse.Ingredients = [.. entity.Ingredients
                                          .Select(i => new MedicineIngredientResponse
                                          {
                                              Name = ingredientDict[i.Id],
                                              StrengthMg = i.StrengthMg
-                                         })
-                                         .ToList();
+                                         })];
 
             #endregion
 
-            return result ;
+            return Result.Success(medicineResponse);
         }
 
         #endregion
 
         #region Update
-        public async Task<int> Update(int id, MedicineRequest entity, CancellationToken cancellationToken = default)
+        public async Task<Result> Update(int id, MedicineRequest entity, CancellationToken cancellationToken = default)
         {
             var medicine = await _medicineRepository.GetByIdAsync(id, false, cancellationToken);
 
             if (medicine == null)
-                return -1;
+                return Result.Failure(MedicineErrors.MedicineNotFound);
+
+            #region Check of Ingredients Ids
+            var existingIngredient = await _ingredientRepository.GetAllAsync(cancellationToken: cancellationToken);
+            var existingIngredientIds = existingIngredient.Select(e => e.Id).ToHashSet();
+
+            var givenIngredientIds = entity.Ingredients.Select(i => i.Id);
+
+            if (!givenIngredientIds.All(id => (existingIngredientIds.Contains(id))))
+            {
+                return Result.Failure(IngredientsErrors.IngredientNotFound);
+            }
+
+            #endregion
 
             entity.Adapt(medicine);
 
-            var existingIngredients = await _medicineIngredientRepository.GetAllAsync(id , cancellationToken);
+            var existingIngredients = await _medicineIngredientRepository.GetAllAsync(id, cancellationToken);
 
-            var toBeDeleted = existingIngredients.Where(ei => 
-                                                            !entity.Ingredients.Any(i => i.Id == ei.IngredientId) 
-                                                            ).ToList();
+            #region Deleted Ingredients
+            var toBeDeleted = existingIngredients.Where(ei =>!entity.Ingredients.Any(i => i.Id == ei.IngredientId)
+                                                                ).ToList();
 
-            var toBeAdded = entity.Ingredients.Where(i => !existingIngredients.Any(ei => ei.IngredientId == i.Id)).ToList();
-
-            var toBeUpdated = existingIngredients.Where(ei => entity.Ingredients.Any(i => i.Id == ei.IngredientId)).ToList();
-
-            if (toBeDeleted.Any())
+            if (toBeDeleted.Count > 0)
             {
                 foreach (var item in toBeDeleted)
                 {
                     item.IsDeleted = true;
                 }
             }
+            #endregion
 
-            if (toBeAdded.Any())
+            #region Inserted Ingredients
+            var toBeAdded = entity.Ingredients.Where(i => !existingIngredients.Any(ei => ei.IngredientId == i.Id)).ToList();
+            if (toBeAdded.Count > 0)
             {
                 var newMedicineIngredients = toBeAdded.Select(i => new MedicineIngredient
                 {
@@ -144,8 +160,12 @@ namespace MedSphere.BLL.Services.Medicines
                 }).ToList();
                 await _medicineIngredientRepository.AddAsync(newMedicineIngredients, cancellationToken);
             }
+            #endregion
 
-            if (toBeUpdated.Any())
+            #region Updated Ingredients
+            var toBeUpdated = existingIngredients.Where(ei => entity.Ingredients.Any(i => i.Id == ei.IngredientId)).ToList();
+
+            if (toBeUpdated.Count > 0)
             {
                 foreach (var item in toBeUpdated)
                 {
@@ -154,19 +174,23 @@ namespace MedSphere.BLL.Services.Medicines
                     item.IsDeleted = false;
                 }
             }
-            return await _medicineRepository.SaveChangesAsync(cancellationToken);
+            #endregion
+
+            await _medicineRepository.SaveChangesAsync(cancellationToken);
+            return Result.Success();
         }
         #endregion
 
         #region Delete
-        public async Task<bool> Delete(int id, CancellationToken cancellationToken = default)
+        public async Task<Result> Delete(int id, CancellationToken cancellationToken = default)
         {
             var entity = await _medicineRepository.GetByIdAsync(id, false, cancellationToken);
             if (entity == null)
-                return false;
+                return Result.Failure(MedicineErrors.MedicineNotFound);
 
             entity.IsDeleted = true;
-            return await _medicineRepository.SaveChangesAsync(cancellationToken) > 0 ;
+            await _medicineRepository.SaveChangesAsync(cancellationToken);
+            return Result.Success();
         }
 
         #endregion

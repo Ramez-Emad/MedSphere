@@ -1,9 +1,5 @@
 ﻿using MedSphere.BLL.Contracts.Ingredients;
-using MedSphere.BLL.Contracts.Medicines;
 using MedSphere.BLL.Services.Ingredients;
-using MedSphere.DAL.Entities.Medicines;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MedSphere.PL.Controllers;

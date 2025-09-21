@@ -2,11 +2,6 @@
 using MedSphere.DAL.Entities.Medicines;
 using MedSphere.DAL.Repositories._Generic;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MedSphere.DAL.Repositories.Ingredients;
 public class IngredientRepository : GenericRepository<Ingredient>, IIngredientRepository

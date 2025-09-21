@@ -1,15 +1,9 @@
 ﻿using Mapster;
 using MedSphere.BLL.Abstractions;
 using MedSphere.BLL.Contracts.Ingredients;
-using MedSphere.BLL.Contracts.Medicines;
 using MedSphere.BLL.Errors.Ingredients;
 using MedSphere.DAL.Entities.Medicines;
 using MedSphere.DAL.Repositories.Ingredients;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MedSphere.BLL.Services.Ingredients;
 public class IngredientService(IIngredientRepository _ingredientRepository) : IIngredientService
