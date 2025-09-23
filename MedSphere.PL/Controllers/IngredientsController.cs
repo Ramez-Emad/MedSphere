@@ -1,5 +1,6 @@
 ﻿using MedSphere.BLL.Contracts.Ingredients;
 using MedSphere.BLL.Services.Ingredients;
+using MedSphere.PL.Extensions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MedSphere.PL.Controllers;
@@ -25,7 +26,7 @@ public class IngredientsController(IIngredientService _ingredientService) : Cont
 
         return result.IsSuccess
                      ? Ok(result.Value)
-                     : BadRequest(result.Error);
+                     : result.ToProblem();
     }
 
     #endregion
@@ -38,7 +39,7 @@ public class IngredientsController(IIngredientService _ingredientService) : Cont
 
         return result.IsSuccess
                      ? CreatedAtAction(nameof(Get), new { id = result.Value.Id }, result.Value)
-                     : BadRequest(result.Error);
+                     : result.ToProblem();
     }
 
     #endregion
@@ -52,7 +53,7 @@ public class IngredientsController(IIngredientService _ingredientService) : Cont
 
         return result.IsSuccess
                      ? NoContent()
-                     : BadRequest(result.Error);
+                     : result.ToProblem();
     }
     #endregion
 
@@ -64,7 +65,7 @@ public class IngredientsController(IIngredientService _ingredientService) : Cont
 
         return result.IsSuccess
                     ? NoContent()
-                    : BadRequest(result.Error);
+                    : result.ToProblem();
 
     }
     #endregion

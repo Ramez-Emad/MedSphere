@@ -1,5 +1,6 @@
 ﻿using MedSphere.BLL.Contracts.Medicines;
 using MedSphere.BLL.Services.Medicines;
+using MedSphere.PL.Extensions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MedSphere.PL.Controllers
@@ -26,7 +27,7 @@ namespace MedSphere.PL.Controllers
             var result = await _service.GetByIdAsync(id);
             return result.IsSuccess
                          ? Ok(result.Value)
-                         : BadRequest(result.Error);
+                         : result.ToProblem();
         }
 
         #endregion
@@ -35,19 +36,11 @@ namespace MedSphere.PL.Controllers
         [HttpPost]
         public async Task<ActionResult> Create(MedicineRequest medicine)
         {
-            //var validator = new MedicineValidator();
-            //var ValidationResult = validator.Validate(medicine);
-
-            //if (!ValidationResult.IsValid)
-            //{
-            //    return BadRequest(ValidationResult.Errors);
-            //}
-
             var result = await _service.AddAsync(medicine);
 
             return result.IsSuccess
                          ? CreatedAtAction(nameof(Get), new { id = result.Value.Id }, result.Value)
-                         : BadRequest(result.Error);
+                         : result.ToProblem();
 
         }
 
@@ -58,19 +51,11 @@ namespace MedSphere.PL.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult> Edit(int id, MedicineRequest medicine)
         {
-            var validator = new MedicineValidator();
-            var ValidationResult = validator.Validate(medicine);
-
-            if (!ValidationResult.IsValid)
-            {
-                return BadRequest(ValidationResult.Errors);
-            }
-
             var result = await _service.Update(id, medicine);
 
             return result.IsSuccess
                          ? NoContent()
-                         : BadRequest(result.Error);
+                         : result.ToProblem();
         }
         #endregion
 
@@ -81,7 +66,7 @@ namespace MedSphere.PL.Controllers
             var result = await _service.Delete(id);
             return result.IsSuccess
                          ? NoContent()
-                         : BadRequest(result.Error);
+                         : result.ToProblem();
 
         }
         #endregion
