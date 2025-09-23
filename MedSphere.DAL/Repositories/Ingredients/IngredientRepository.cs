@@ -17,4 +17,9 @@ public class IngredientRepository : GenericRepository<Ingredient>, IIngredientRe
     {
         return _appDbContext.Ingredients.AnyAsync(i => i.Name == name, cancellationToken);
     }
+
+    public Task<bool> IsIngredientNameExists(int id, string name, CancellationToken cancellationToken = default)
+    {
+        return _appDbContext.Ingredients.AnyAsync(i => i.Name == name && i.Id != id , cancellationToken);
+    }
 }
