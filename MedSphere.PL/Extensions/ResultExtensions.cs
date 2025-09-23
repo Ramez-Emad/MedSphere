@@ -1,6 +1,6 @@
 ﻿using MedSphere.BLL.Abstractions;
 using Microsoft.AspNetCore.Mvc;
-
+using Microsoft.AspNetCore.Http.HttpResults;
 namespace MedSphere.PL.Extensions;
 
 public static class ResultExtensions
@@ -15,10 +15,11 @@ public static class ResultExtensions
         var problem = Results.Problem(statusCode: result.Error.StatusCode);
 
 
-        var problemDetails = problem.GetType()/*ProblemHttpResult*/.GetProperty(nameof(ProblemDetails))!.GetValue(problem) as ProblemDetails;
+        var problemResult = problem as ProblemHttpResult;
 
+        var details = problemResult?.ProblemDetails;
 
-        problemDetails!.Extensions = new Dictionary<string, object?>
+        details!.Extensions = new Dictionary<string, object?>
         {
             {
                 "errors" , new[]
@@ -32,7 +33,7 @@ public static class ResultExtensions
             }
         };
 
-        return new ObjectResult(problemDetails);
+        return new ObjectResult(details);
 
 
     }
