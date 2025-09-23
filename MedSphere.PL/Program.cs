@@ -9,6 +9,8 @@ using MedSphere.DAL.Data;
 using MedSphere.DAL.Repositories.Ingredients;
 using MedSphere.DAL.Repositories.MedicineIngredients;
 using MedSphere.DAL.Repositories.Medicines;
+using MedSphere.PL;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
@@ -56,6 +58,26 @@ builder.Services.AddValidatorsFromAssemblyContaining<FluentValidationAssemblyRef
 builder.Services.AddFluentValidationAutoValidation();
 #endregion
 
+#region CORS
+
+builder.Services.AddCors(options =>
+          options.AddDefaultPolicy(br =>
+              br
+                  .AllowAnyMethod()
+                  .AllowAnyHeader()
+                  .WithOrigins(builder.Configuration.GetSection("AllowedOrigins").Get<string[]>()!)
+          )
+      );
+
+#endregion
+
+
+#region Exception Handling
+
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddProblemDetails();
+
+#endregion
 
 var app = builder.Build();
 
@@ -69,8 +91,21 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseAuthorization();
+app.UseExceptionHandler();
+
+app.UseCors();
 
 app.MapControllers();
+
+app.MapFallback(async context =>
+{
+    context.Response.StatusCode = StatusCodes.Status404NotFound;
+    await context.Response.WriteAsJsonAsync(new ProblemDetails
+    {
+        Status = StatusCodes.Status404NotFound,
+        Title = "Not Found",
+        Detail = "The requested endpoint does not exist."
+    });
+});
 
 app.Run();
