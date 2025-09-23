@@ -11,6 +11,7 @@ using MedSphere.DAL.Repositories.MedicineIngredients;
 using MedSphere.DAL.Repositories.Medicines;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
+using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -52,7 +53,7 @@ builder.Services.AddScoped<IMapper, ServiceMapper>();
 #region Validator Service
 
 builder.Services.AddValidatorsFromAssemblyContaining<FluentValidationAssemblyReference>();
-
+builder.Services.AddFluentValidationAutoValidation();
 #endregion
 
 
