@@ -13,13 +13,7 @@ public class IngredientRepository : GenericRepository<Ingredient>, IIngredientRe
         _appDbContext = appDbContext;
     }
 
-    public Task<bool> IsIngredientNameExists(string name, CancellationToken cancellationToken = default)
-    {
-        return _appDbContext.Ingredients.AnyAsync(i => i.Name == name, cancellationToken);
-    }
+    public async Task<int?> IsIngredientNameExists(string name, CancellationToken cancellationToken = default)
+       => await _appDbContext.Ingredients.Where(i => i.Name == name).Select(i => i.Id).FirstOrDefaultAsync(cancellationToken);
 
-    public Task<bool> IsIngredientNameExists(int id, string name, CancellationToken cancellationToken = default)
-    {
-        return _appDbContext.Ingredients.AnyAsync(i => i.Name == name && i.Id != id , cancellationToken);
-    }
 }

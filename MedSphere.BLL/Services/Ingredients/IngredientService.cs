@@ -37,7 +37,7 @@ public class IngredientService(IIngredientRepository _ingredientRepository) : II
     public async Task<Result<IngredientResponse>> AddAsync(IngredientRequest entity, CancellationToken cancellationToken = default)
     {
 
-        if (await _ingredientRepository.IsIngredientNameExists(entity.Name, cancellationToken))
+        if (await _ingredientRepository.IsIngredientNameExists(entity.Name, cancellationToken) is not null)
             return Result.Failure<IngredientResponse>(IngredientsErrors.IngredientNameAlreadyExists);
 
         var ingredient = entity.Adapt<Ingredient>();
@@ -57,7 +57,8 @@ public class IngredientService(IIngredientRepository _ingredientRepository) : II
         if (ingredient == null)
             return Result.Failure(IngredientsErrors.IngredientNotFound);
 
-        if (await _ingredientRepository.IsIngredientNameExists(id, entity.Name, cancellationToken))
+
+        if ( (await _ingredientRepository.IsIngredientNameExists(entity.Name, cancellationToken) is { } val && val != id))
             return Result.Failure<IngredientResponse>(IngredientsErrors.IngredientNameAlreadyExists);
 
         entity.Adapt(ingredient);
