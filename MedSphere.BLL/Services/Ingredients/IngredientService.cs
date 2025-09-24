@@ -57,6 +57,9 @@ public class IngredientService(IIngredientRepository _ingredientRepository) : II
         if (ingredient == null)
             return Result.Failure(IngredientsErrors.IngredientNotFound);
 
+        if (await _ingredientRepository.IsIngredientNameExists(id, entity.Name, cancellationToken))
+            return Result.Failure<IngredientResponse>(IngredientsErrors.IngredientNameAlreadyExists);
+
         entity.Adapt(ingredient);
 
         await _ingredientRepository.SaveChangesAsync(cancellationToken);
