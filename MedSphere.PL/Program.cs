@@ -3,18 +3,21 @@ using Mapster;
 using MapsterMapper;
 using MedSphere.BLL;
 using MedSphere.BLL.Mapping;
+using MedSphere.BLL.Services.Auth;
 using MedSphere.BLL.Services.Ingredients;
 using MedSphere.BLL.Services.Medicines;
 using MedSphere.DAL.Data;
+using MedSphere.DAL.Entities.Auth;
 using MedSphere.DAL.Repositories.Ingredients;
 using MedSphere.DAL.Repositories.MedicineIngredients;
 using MedSphere.DAL.Repositories.Medicines;
 using MedSphere.PL;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
-using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
 using Serilog;
+using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -40,6 +43,8 @@ builder.Services.AddScoped<IIngredientRepository, IngredientRepository>();
 builder.Services.AddScoped<IIngredientService, IngredientService>();
 
 builder.Services.AddScoped<IMedicineIngredientRepository, MedicineIngredientRepository>();
+
+builder.Services.AddScoped<IAuthService , AuthService>();
 #endregion
 
 #region Mapper Service
@@ -86,6 +91,15 @@ builder.Host.UseSerilog((context, configuration) =>
 
 #endregion
 
+#region Identity
+
+builder.Services.AddIdentity<ApplicationUser, ApplicationRole>()
+            .AddEntityFrameworkStores<AppDbContext>()
+            .AddDefaultTokenProviders();
+
+#endregion
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -104,6 +118,8 @@ app.UseHttpsRedirection();
 app.UseExceptionHandler();
 
 app.UseCors();
+
+app.UseAuthentication();
 
 app.MapControllers();
 

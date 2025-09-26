@@ -8,7 +8,7 @@ using MedSphere.DAL.Repositories.Ingredients;
 using Microsoft.Extensions.Logging;
 
 namespace MedSphere.BLL.Services.Ingredients;
-public class IngredientService(IIngredientRepository _ingredientRepository , ILogger<IngredientService> _logger) : IIngredientService
+public class IngredientService(IIngredientRepository _ingredientRepository) : IIngredientService
 {
 
 
