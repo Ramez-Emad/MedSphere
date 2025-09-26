@@ -14,7 +14,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
-
+using Serilog;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -71,11 +71,18 @@ builder.Services.AddCors(options =>
 
 #endregion
 
-
 #region Exception Handling
 
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
+
+#endregion
+
+#region Logging
+
+builder.Host.UseSerilog((context, configuration) =>
+    configuration.ReadFrom.Configuration(context.Configuration)
+);
 
 #endregion
 
@@ -88,6 +95,9 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference();
 
 }
+
+
+app.UseSerilogRequestLogging();
 
 app.UseHttpsRedirection();
 
