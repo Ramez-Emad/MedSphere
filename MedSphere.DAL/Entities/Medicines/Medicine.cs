@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MedSphere.DAL.Entities.Medicines;
@@ -36,8 +37,10 @@ public class Medicine : AuditableEntity
 
     public int StockQuantity { get; set; }
 
-     public decimal Price { get; set; }
+    [Precision(10, 2)]
+    public decimal Price { get; set; }
 
+    [Precision(5, 2)]
     public decimal DiscountPercentage { get; set; }
 
     public string? SideEffects { get; set; }
