@@ -3,26 +3,73 @@ using Mapster;
 using MedSphere.BLL.Abstractions;
 using MedSphere.BLL.Contracts.Auth;
 using MedSphere.BLL.Errors.Auth;
+using MedSphere.BLL.Services.Auth.Jwt;
 using MedSphere.DAL.Entities.Auth;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace MedSphere.BLL.Services.Auth;
 
 public class AuthService(
     UserManager<ApplicationUser> _userManager,
+    SignInManager<ApplicationUser> _signInManager,
+    IJwtProvider _jwtProvider,
     ILogger<AuthService> _logger
     ) : IAuthService
 {
+
+    private readonly int _refreshTokenExpiryDays = 14;
+
+    #region Login
+
+    public async Task<Result<AuthLoginResponse>> LoginAsync(AuthLoginRequest request, CancellationToken cancellationToken)
+    {
+        if (await _userManager.FindByEmailAsync(request.Email) is not { } user)
+            return Result.Failure<AuthLoginResponse>(AuthErrors.InvalidCredentials);
+
+        var result =await  _signInManager.CheckPasswordSignInAsync(user, request.Password, true);
+
+
+        if(result.Succeeded)
+        {
+            var (token , expiresIn) = _jwtProvider.GenerateToken(user);
+
+            var refreshToken = new RefreshToken
+            {
+                Token = GenerateRefreshToken(),
+                ExpiresOn = DateTime.UtcNow.AddDays(_refreshTokenExpiryDays),
+            };
+
+            user.RefreshTokens.Add(refreshToken);
+
+            await _userManager.UpdateAsync(user);
+ 
+
+            var response = new AuthLoginResponse(user.FirstName , user.LastName , token, expiresIn , refreshToken.Token , refreshToken.ExpiresOn);
+
+            return Result.Success(response);
+        }
+
+        var error = result.IsNotAllowed
+                   ? AuthErrors.EmailNotConfirmed
+                   : result.IsLockedOut
+                   ? AuthErrors.LockedUser
+                   : AuthErrors.InvalidCredentials;
+
+        return Result.Failure<AuthLoginResponse>(error);
+    }
+
+    #endregion
 
     #region Email Confirmation
 
     public async Task<Result> ConfirmEmailAsync(ConfirmEmailRequest request, CancellationToken cancellationToken)
     {
-         var applicationUser = await  _userManager.FindByIdAsync(request.UserId);
+        var applicationUser = await _userManager.FindByIdAsync(request.UserId);
 
         if (applicationUser == null)
             return Result.Failure(AuthErrors.UserNotFound);
@@ -131,7 +178,7 @@ public class AuthService(
         // Send email with this code
 
         _logger.LogInformation("Sent password reset code to user {Email}. UserId {userId} Reset code: {code}", request.Email, applicationUser.Id, code);
-        
+
         return Result.Success();
     }
 
@@ -168,5 +215,77 @@ public class AuthService(
         return Result.Success();
     }
 
+
+
     #endregion
+
+    private static string GenerateRefreshToken()
+    {
+        return Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
+    }
+
+    public async Task<Result<AuthLoginResponse>> GetRefreshTokenAsync(string token, string refreshToken, CancellationToken cancellationToken = default)
+    {
+
+        if (_jwtProvider.ValidateToken(token) is not { } userId)
+            return Result.Failure<AuthLoginResponse>(AuthErrors.InvalidJwtToken);
+
+        if (await _userManager.FindByIdAsync(userId) is not { } user)
+            return Result.Failure<AuthLoginResponse>(AuthErrors.InvalidJwtToken);
+
+        if( user.LockoutEnd > DateTime.UtcNow)
+            return Result.Failure<AuthLoginResponse>(AuthErrors.LockedUser);
+
+        if (user.RefreshTokens.SingleOrDefault(x => x.Token == refreshToken && x.IsActive) is not { } userRefreshToken)
+            return Result.Failure<AuthLoginResponse>(AuthErrors.InvalidRefreshToken);
+
+
+        userRefreshToken.RevokedOn = DateTime.UtcNow;
+
+        var (newToken, expiresIn) = _jwtProvider.GenerateToken(user);
+        var newRefreshToken = GenerateRefreshToken();
+        var refreshTokenExpiration = DateTime.UtcNow.AddDays(_refreshTokenExpiryDays);
+
+        user.RefreshTokens.Add(new RefreshToken
+        {
+            Token = newRefreshToken,
+            ExpiresOn = refreshTokenExpiration
+        });
+
+        await _userManager.UpdateAsync(user);
+
+
+        var response = new AuthLoginResponse(
+        
+            FirstName: user.FirstName,
+            LastName: user.LastName,
+            Token: newToken,
+            ExpiresIn: expiresIn * 60,
+            RefreshToken: newRefreshToken,
+            RefreshTokenExpiryTime: refreshTokenExpiration
+        );
+
+        return Result.Success(response);
+
+    }
+
+    public async Task<Result> RevokeRefreshTokenAsync(string token, string refreshToken, CancellationToken cancellationToken = default)
+    {
+       
+        if (_jwtProvider.ValidateToken(token) is not { } userId)
+            return Result.Failure(AuthErrors.InvalidJwtToken);
+
+        if (await _userManager.FindByIdAsync(userId) is not { } user)
+            return Result.Failure(AuthErrors.InvalidJwtToken);
+
+        if (user.RefreshTokens.SingleOrDefault(x => x.Token == refreshToken && x.IsActive) is not { } userRefreshToken)
+            return Result.Failure(AuthErrors.InvalidRefreshToken);
+
+        userRefreshToken.RevokedOn = DateTime.UtcNow;
+
+        await _userManager.UpdateAsync(user);
+
+        return Result.Success();
+
+    }
 }

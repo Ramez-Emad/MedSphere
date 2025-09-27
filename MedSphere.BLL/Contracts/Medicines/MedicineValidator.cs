@@ -1,5 +1,4 @@
-﻿using FluentValidation;
-using MedSphere.BLL.Contracts.MedicineIngredients;
+﻿using MedSphere.BLL.Contracts.MedicineIngredients;
 
 namespace MedSphere.BLL.Contracts.Medicines
 {

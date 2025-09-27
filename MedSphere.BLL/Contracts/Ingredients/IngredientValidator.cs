@@ -1,6 +1,4 @@
-﻿using FluentValidation;
-
-namespace MedSphere.BLL.Contracts.Ingredients;
+﻿namespace MedSphere.BLL.Contracts.Ingredients;
 public class IngredientValidator : AbstractValidator<IngredientRequest>
 {
     public IngredientValidator()

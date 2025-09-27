@@ -10,6 +10,40 @@ namespace MedSphere.PL.Controllers;
 [ApiController]
 public class AuthController(IAuthService _authService) : ControllerBase
 {
+
+    [HttpPut("revoke-refresh-token")]
+    public async Task<IActionResult> RevokeRefreshTokenAsync([FromBody] RefreshTokenRequest request, CancellationToken cancellationToken)
+    {
+      
+        var result = await _authService.RevokeRefreshTokenAsync(request.token, request.refreshToken, cancellationToken);
+
+
+        return result.IsSuccess
+            ? Ok("Refresh token revoked successfully")
+            : result.ToProblem();
+    }
+
+    [HttpPost("refresh")]
+    public async Task<IActionResult> RefreshTokenAsync([FromBody] RefreshTokenRequest request, CancellationToken cancellationToken)
+    {
+        var authResult = await _authService.GetRefreshTokenAsync(request.token, request.refreshToken, cancellationToken);
+
+        return authResult.IsSuccess
+            ? Ok(authResult.Value)
+            : authResult.ToProblem();
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> LoginAsync([FromBody] AuthLoginRequest request, CancellationToken cancellationToken)
+    {
+        var result = await _authService.LoginAsync(request, cancellationToken);
+
+        return result.IsSuccess
+                     ? Ok(result.Value)
+                     : result.ToProblem();
+    }
+
+
     [HttpPost("register")]
     public async Task<IActionResult> Register(RegisterRequest registerRequest, CancellationToken cancellationToken)
     {

@@ -1,8 +1,8 @@
 ﻿namespace MedSphere.BLL.Contracts.Auth;
 
-public record RegisterRequest(
+public record AuthLoginRequest
+(
     string Email,
-    string FirstName,
-    string LastName,
     string Password
     );
+

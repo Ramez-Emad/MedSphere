@@ -1,10 +1,4 @@
-﻿using FluentValidation;
-using MedSphere.Shared.Const;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using MedSphere.Shared.Const;
 
 namespace MedSphere.BLL.Contracts.Auth;
 
