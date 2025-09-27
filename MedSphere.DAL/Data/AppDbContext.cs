@@ -3,10 +3,12 @@ using MedSphere.DAL.Entities.Medicines;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using MedSphere.DAL.Entities.Auth;
 
 
 namespace MedSphere.DAL.Data;
-public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
+public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbContext<ApplicationUser, ApplicationRole, string>(options)
 {
     public DbSet<Medicine> Medicines { get; set; }
     public DbSet<Ingredient> Ingredients { get; set; }

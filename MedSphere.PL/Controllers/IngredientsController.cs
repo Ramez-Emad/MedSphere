@@ -1,11 +1,13 @@
 ﻿using MedSphere.BLL.Contracts.Ingredients;
 using MedSphere.BLL.Services.Ingredients;
 using MedSphere.PL.Extensions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MedSphere.PL.Controllers;
 [Route("api/[controller]")]
 [ApiController]
+[Authorize]
 public class IngredientsController(IIngredientService _ingredientService) : ControllerBase
 {
     #region GetAll
