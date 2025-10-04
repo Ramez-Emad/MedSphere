@@ -36,7 +36,7 @@ public class AuthService(
 
         if(result.Succeeded)
         {
-            var (token , expiresIn) = _jwtProvider.GenerateToken(user);
+            var (token , expiresIn) = _jwtProvider.GenerateJwtToken(user);
 
             var refreshToken = new RefreshToken
             {
@@ -242,7 +242,7 @@ public class AuthService(
 
         userRefreshToken.RevokedOn = DateTime.UtcNow;
 
-        var (newToken, expiresIn) = _jwtProvider.GenerateToken(user);
+        var (newToken, expiresIn) = _jwtProvider.GenerateJwtToken(user);
         var newRefreshToken = GenerateRefreshToken();
         var refreshTokenExpiration = DateTime.UtcNow.AddDays(_refreshTokenExpiryDays);
 
