@@ -1,4 +1,5 @@
-﻿using MedSphere.BLL.Contracts.Roles;
+﻿using Azure.Core;
+using MedSphere.BLL.Contracts.Roles;
 using MedSphere.BLL.Services.Roles;
 using MedSphere.PL.Extensions;
 using Microsoft.AspNetCore.Mvc;
@@ -50,4 +51,18 @@ public class RolesController(IRoleService _roleService) : ControllerBase
     }
     #endregion
 
+    #region Toggle Role
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Toggle(string id, CancellationToken cancellationToken)
+    {
+        var result = await _roleService.ToggleRoleAsync(id, cancellationToken);
+
+        return result.IsSuccess
+                     ? NoContent()
+                     : result.ToProblem();
+
+    }
+
+    #endregion
 }

@@ -176,6 +176,28 @@ public class RoleService(RoleManager<ApplicationRole> _roleManager , IRoleClaimR
 
         return Result.Success();
     }
+
     #endregion
+ 
+    #region Toggle Role
+    public async Task<Result> ToggleRoleAsync(string id, CancellationToken cancellationToken = default)
+    {
+        if ( await _roleManager.FindByIdAsync(id) is not { } role )
+            return Result.Failure(RoleErrors.RoleNotFound);
+
+        role.IsDeleted = !role.IsDeleted;
+        var result = await _roleManager.UpdateAsync(role);
+
+        if (!result.Succeeded)
+        {
+            var error = result.Errors.First();
+            return Result.Failure(new Error(error.Code,error.Description,StatusCodes.Status400BadRequest));
+        }
+    
+        return Result.Success();
+    } 
+    #endregion
+
+
 
 }
