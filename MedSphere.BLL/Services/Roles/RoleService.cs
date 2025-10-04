@@ -14,7 +14,7 @@ public class RoleService(RoleManager<ApplicationRole> _roleManager , IRoleClaimR
     #region Get Role 
     public async Task<Result<RoleDetailResponse>> GetRoleByIdAsync(string roleId, CancellationToken cancellationToken = default)
     {
-        if (await _roleManager.FindByIdAsync(roleId) is not { } role)
+        if (await _roleManager.FindByIdAsync(roleId) is not { } role || role.IsDeleted )
             return Result.Failure<RoleDetailResponse>(RoleErrors.RoleNotFound);
 
         var claims = await _roleManager.GetClaimsAsync(role);
@@ -99,7 +99,7 @@ public class RoleService(RoleManager<ApplicationRole> _roleManager , IRoleClaimR
 
         #region Check Role Exist
 
-        if (await _roleManager.FindByIdAsync(id) is not { } role)
+        if (await _roleManager.FindByIdAsync(id) is not { } role || role.IsDeleted)
             return Result.Failure<RoleDetailResponse>(RoleErrors.RoleNotFound);
 
         #endregion
@@ -197,7 +197,6 @@ public class RoleService(RoleManager<ApplicationRole> _roleManager , IRoleClaimR
         return Result.Success();
     } 
     #endregion
-
 
 
 }
