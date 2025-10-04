@@ -28,7 +28,7 @@ public class IngredientService(IIngredientRepository _ingredientRepository) : II
         var ingredient = await _ingredientRepository.GetByIdAsync(id, withDeleted, cancellationToken);
 
         if (ingredient == null)
-            return Result.Failure<IngredientResponse?>(IngredientsErrors.IngredientNotFound);
+            return Result.Failure<IngredientResponse?>(IngredientErrors.IngredientNotFound);
 
         return Result.Success<IngredientResponse?>(ingredient.Adapt<IngredientResponse>());
     }
@@ -40,7 +40,7 @@ public class IngredientService(IIngredientRepository _ingredientRepository) : II
     {
 
         if (await _ingredientRepository.IsIngredientNameExists(entity.Name, cancellationToken) is not null)
-            return Result.Failure<IngredientResponse>(IngredientsErrors.IngredientNameAlreadyExists);
+            return Result.Failure<IngredientResponse>(IngredientErrors.IngredientNameAlreadyExists);
 
         var ingredient = entity.Adapt<Ingredient>();
 
@@ -57,11 +57,11 @@ public class IngredientService(IIngredientRepository _ingredientRepository) : II
         var ingredient = await _ingredientRepository.GetByIdAsync(id, false, cancellationToken);
 
         if (ingredient == null)
-            return Result.Failure(IngredientsErrors.IngredientNotFound);
+            return Result.Failure(IngredientErrors.IngredientNotFound);
 
 
         if ( (await _ingredientRepository.IsIngredientNameExists(entity.Name, cancellationToken) is { } val && val != id))
-            return Result.Failure<IngredientResponse>(IngredientsErrors.IngredientNameAlreadyExists);
+            return Result.Failure<IngredientResponse>(IngredientErrors.IngredientNameAlreadyExists);
 
         entity.Adapt(ingredient);
 
@@ -77,7 +77,7 @@ public class IngredientService(IIngredientRepository _ingredientRepository) : II
         var entity = await _ingredientRepository.GetByIdAsync(id, false, cancellationToken);
 
         if (entity == null)
-            return Result.Failure(IngredientsErrors.IngredientNotFound);
+            return Result.Failure(IngredientErrors.IngredientNotFound);
 
         entity.IsDeleted = true;
         await _ingredientRepository.SaveChangesAsync(cancellationToken);

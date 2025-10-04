@@ -2,16 +2,19 @@ using FluentValidation;
 using Mapster;
 using MapsterMapper;
 using MedSphere.BLL;
+using MedSphere.BLL.Consts;
 using MedSphere.BLL.Mapping;
 using MedSphere.BLL.Services.Auth;
 using MedSphere.BLL.Services.Auth.Jwt;
 using MedSphere.BLL.Services.Ingredients;
 using MedSphere.BLL.Services.Medicines;
+using MedSphere.BLL.Services.Roles;
 using MedSphere.DAL.Data;
 using MedSphere.DAL.Entities.Auth;
 using MedSphere.DAL.Repositories.Ingredients;
 using MedSphere.DAL.Repositories.MedicineIngredients;
 using MedSphere.DAL.Repositories.Medicines;
+using MedSphere.DAL.Repositories.RoleClaims;
 using MedSphere.PL;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -47,9 +50,15 @@ builder.Services.AddScoped<IMedicineService, MedicineService>();
 builder.Services.AddScoped<IIngredientRepository, IngredientRepository>();
 builder.Services.AddScoped<IIngredientService, IngredientService>();
 
+
+
 builder.Services.AddScoped<IMedicineIngredientRepository, MedicineIngredientRepository>();
 
 builder.Services.AddScoped<IAuthService , AuthService>();
+
+builder.Services.AddScoped<IRoleService, RoleService>();
+builder.Services.AddScoped<IRoleClaimRepository, RoleClaimRepository>();
+
 #endregion
 
 #region Mapper Service
