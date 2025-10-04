@@ -158,7 +158,7 @@ namespace MedSphere.DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Ingredients");
+                    b.ToTable("Ingredients", (string)null);
                 });
 
             modelBuilder.Entity("MedSphere.DAL.Entities.Medicines.Medicine", b =>
@@ -246,7 +246,7 @@ namespace MedSphere.DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Medicines");
+                    b.ToTable("Medicines", (string)null);
                 });
 
             modelBuilder.Entity("MedSphere.DAL.Entities.Medicines.MedicineImage", b =>
@@ -287,7 +287,7 @@ namespace MedSphere.DAL.Migrations
 
                     b.HasIndex("MedicineId");
 
-                    b.ToTable("MedicineImages");
+                    b.ToTable("MedicineImages", (string)null);
                 });
 
             modelBuilder.Entity("MedSphere.DAL.Entities.Medicines.MedicineIngredient", b =>
@@ -321,7 +321,7 @@ namespace MedSphere.DAL.Migrations
 
                     b.HasIndex("IngredientId");
 
-                    b.ToTable("MedicineIngredients");
+                    b.ToTable("MedicineIngredients", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -458,7 +458,7 @@ namespace MedSphere.DAL.Migrations
 
                             b1.HasKey("ApplicationUserId", "Id");
 
-                            b1.ToTable("RefreshToken");
+                            b1.ToTable("RefreshToken", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("ApplicationUserId");
