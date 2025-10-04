@@ -15,7 +15,7 @@ public class AuthController(IAuthService _authService) : ControllerBase
     public async Task<IActionResult> RevokeRefreshTokenAsync([FromBody] RefreshTokenRequest request, CancellationToken cancellationToken)
     {
       
-        var result = await _authService.RevokeRefreshTokenAsync(request.token, request.refreshToken, cancellationToken);
+        var result = await _authService.RevokeRefreshTokenAsync(request, cancellationToken);
 
 
         return result.IsSuccess
@@ -26,7 +26,7 @@ public class AuthController(IAuthService _authService) : ControllerBase
     [HttpPost("refresh")]
     public async Task<IActionResult> RefreshTokenAsync([FromBody] RefreshTokenRequest request, CancellationToken cancellationToken)
     {
-        var authResult = await _authService.GetRefreshTokenAsync(request.token, request.refreshToken, cancellationToken);
+        var authResult = await _authService.GetRefreshTokenAsync(request, cancellationToken);
 
         return authResult.IsSuccess
             ? Ok(authResult.Value)
