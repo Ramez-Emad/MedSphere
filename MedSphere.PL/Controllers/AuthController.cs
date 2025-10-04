@@ -1,7 +1,6 @@
 ﻿using MedSphere.BLL.Contracts.Auth;
 using MedSphere.BLL.Services.Auth;
 using MedSphere.PL.Extensions;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MedSphere.PL.Controllers;
