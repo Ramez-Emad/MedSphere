@@ -10,8 +10,8 @@ namespace MedSphere.BLL.Services.Auth;
 
 public interface IAuthService
 {
-    Task<Result> RevokeRefreshTokenAsync(string token, string refreshToken, CancellationToken cancellationToken = default);
-    Task<Result<AuthLoginResponse>> GetRefreshTokenAsync(string token, string refreshToken, CancellationToken cancellationToken = default);
+    Task<Result> RevokeRefreshTokenAsync(RefreshTokenRequest request, CancellationToken cancellationToken = default);
+    Task<Result<AuthLoginResponse>> GetRefreshTokenAsync(RefreshTokenRequest request, CancellationToken cancellationToken = default);
 
     Task<Result<AuthLoginResponse>> LoginAsync (AuthLoginRequest request, CancellationToken cancellationToken);
     Task<Result> RegisterUserAsync(RegisterRequest registerRequest ,CancellationToken cancellationToken);

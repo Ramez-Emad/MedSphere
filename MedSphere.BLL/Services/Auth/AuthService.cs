@@ -224,10 +224,10 @@ public class AuthService(
         return Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
     }
 
-    public async Task<Result<AuthLoginResponse>> GetRefreshTokenAsync(string token, string refreshToken, CancellationToken cancellationToken = default)
+    public async Task<Result<AuthLoginResponse>> GetRefreshTokenAsync(RefreshTokenRequest request, CancellationToken cancellationToken = default)
     {
 
-        if (_jwtProvider.ValidateToken(token) is not { } userId)
+        if (_jwtProvider.ValidateToken(request.token) is not { } userId)
             return Result.Failure<AuthLoginResponse>(AuthErrors.InvalidJwtToken);
 
         if (await _userManager.FindByIdAsync(userId) is not { } user)
@@ -236,7 +236,7 @@ public class AuthService(
         if( user.LockoutEnd > DateTime.UtcNow)
             return Result.Failure<AuthLoginResponse>(AuthErrors.LockedUser);
 
-        if (user.RefreshTokens.SingleOrDefault(x => x.Token == refreshToken && x.IsActive) is not { } userRefreshToken)
+        if (user.RefreshTokens.SingleOrDefault(x => x.Token == request.refreshToken && x.IsActive) is not { } userRefreshToken)
             return Result.Failure<AuthLoginResponse>(AuthErrors.InvalidRefreshToken);
 
 
@@ -269,16 +269,16 @@ public class AuthService(
 
     }
 
-    public async Task<Result> RevokeRefreshTokenAsync(string token, string refreshToken, CancellationToken cancellationToken = default)
+    public async Task<Result> RevokeRefreshTokenAsync(RefreshTokenRequest request, CancellationToken cancellationToken = default)
     {
        
-        if (_jwtProvider.ValidateToken(token) is not { } userId)
+        if (_jwtProvider.ValidateToken(request.token) is not { } userId)
             return Result.Failure(AuthErrors.InvalidJwtToken);
 
         if (await _userManager.FindByIdAsync(userId) is not { } user)
             return Result.Failure(AuthErrors.InvalidJwtToken);
 
-        if (user.RefreshTokens.SingleOrDefault(x => x.Token == refreshToken && x.IsActive) is not { } userRefreshToken)
+        if (user.RefreshTokens.SingleOrDefault(x => x.Token == request.refreshToken && x.IsActive) is not { } userRefreshToken)
             return Result.Failure(AuthErrors.InvalidRefreshToken);
 
         userRefreshToken.RevokedOn = DateTime.UtcNow;
