@@ -1,4 +1,5 @@
-﻿using MedSphere.BLL.Abstractions;
+﻿using Mapster;
+using MedSphere.BLL.Abstractions;
 using MedSphere.BLL.Consts;
 using MedSphere.BLL.Contracts.Roles;
 using MedSphere.BLL.Errors.Roles;
@@ -6,11 +7,28 @@ using MedSphere.DAL.Entities.Auth;
 using MedSphere.DAL.Repositories.RoleClaims;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace MedSphere.BLL.Services.Roles;
 
 public class RoleService(RoleManager<ApplicationRole> _roleManager , IRoleClaimRepository _roleClaimRepository) : IRoleService
 {
+    #region GetAll Roles
+    public async Task<Result<IEnumerable<RoleResponse>>> GetAllRolesAsync(CancellationToken cancellationToken = default)
+    {
+        var roles = await _roleManager.Roles
+                                      .Where(r => !r.IsDeleted)
+                                      .ToListAsync(cancellationToken);
+
+        var response = roles.Adapt<IEnumerable<RoleResponse>>();
+
+        return Result.Success(response);
+    }
+
+
+
+    #endregion
+
     #region Get Role 
     public async Task<Result<RoleDetailResponse>> GetRoleByIdAsync(string roleId, CancellationToken cancellationToken = default)
     {
@@ -195,8 +213,8 @@ public class RoleService(RoleManager<ApplicationRole> _roleManager , IRoleClaimR
         }
     
         return Result.Success();
-    } 
-    #endregion
+    }
 
+    #endregion
 
 }

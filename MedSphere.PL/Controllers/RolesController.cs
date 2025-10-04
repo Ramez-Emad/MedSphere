@@ -10,6 +10,18 @@ namespace MedSphere.PL.Controllers;
 [ApiController]
 public class RolesController(IRoleService _roleService) : ControllerBase
 {
+    #region GetAll
+
+    [HttpGet]
+    public async Task<ActionResult> GetAll(CancellationToken cancellationToken)
+    {
+        var result = await _roleService.GetAllRolesAsync(cancellationToken); 
+
+        return result. IsSuccess
+                     ? Ok(result.Value)
+                     : result.ToProblem();
+    }
+    #endregion
 
     #region Get Role
     [HttpGet("{id}")]
