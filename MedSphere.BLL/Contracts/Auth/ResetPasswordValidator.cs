@@ -1,5 +1,4 @@
-﻿using FluentValidation;
-using MedSphere.Shared.Const;
+﻿using MedSphere.Shared.Const;
 
 namespace MedSphere.BLL.Contracts.Auth;
 

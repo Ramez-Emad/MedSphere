@@ -4,6 +4,7 @@ using MapsterMapper;
 using MedSphere.BLL;
 using MedSphere.BLL.Mapping;
 using MedSphere.BLL.Services.Auth;
+using MedSphere.BLL.Services.Auth.Jwt;
 using MedSphere.BLL.Services.Ingredients;
 using MedSphere.BLL.Services.Medicines;
 using MedSphere.DAL.Data;
@@ -12,12 +13,16 @@ using MedSphere.DAL.Repositories.Ingredients;
 using MedSphere.DAL.Repositories.MedicineIngredients;
 using MedSphere.DAL.Repositories.Medicines;
 using MedSphere.PL;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
 using Serilog;
 using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
+using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -97,8 +102,42 @@ builder.Services.AddIdentity<ApplicationUser, ApplicationRole>()
             .AddEntityFrameworkStores<AppDbContext>()
             .AddDefaultTokenProviders();
 
-#endregion
+builder.Services.AddScoped<IJwtProvider, JwtProvider>();
 
+builder.Services.AddOptions<JwtOptions>()
+            .BindConfiguration(JwtOptions.SectionName)
+            .ValidateDataAnnotations()
+            .ValidateOnStart();
+
+var jwtSettings = builder.Configuration.GetSection(JwtOptions.SectionName).Get<JwtOptions>();
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+           .AddJwtBearer(o =>
+           {
+               o.SaveToken = true;
+               o.TokenValidationParameters = new TokenValidationParameters
+               {
+                   ValidateIssuerSigningKey = true,
+                   IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings?.Key!)),
+
+                   ValidateIssuer = true,
+                   ValidIssuer = jwtSettings?.Issuer,
+
+                   ValidateAudience = true,
+                   ValidAudience = jwtSettings?.Audience,
+
+                   ValidateLifetime = true,
+               };
+           });
+
+
+
+
+#endregion
 
 var app = builder.Build();
 
@@ -120,6 +159,8 @@ app.UseExceptionHandler();
 app.UseCors();
 
 app.UseAuthentication();
+
+app.UseAuthorization();
 
 app.MapControllers();
 

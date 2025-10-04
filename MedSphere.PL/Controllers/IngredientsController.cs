@@ -1,4 +1,5 @@
 ﻿using MedSphere.BLL.Contracts.Ingredients;
+using MedSphere.BLL.Services.Auth.Jwt;
 using MedSphere.BLL.Services.Ingredients;
 using MedSphere.PL.Extensions;
 using Microsoft.AspNetCore.Authorization;
@@ -15,7 +16,7 @@ public class IngredientsController(IIngredientService _ingredientService) : Cont
     [HttpGet]
     public async Task<ActionResult> GetAll()
     {
-        return Ok(await _ingredientService.GetAllAsync());
+       return Ok(await _ingredientService.GetAllAsync());
     }
     #endregion
 
