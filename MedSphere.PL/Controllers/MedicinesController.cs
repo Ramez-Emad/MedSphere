@@ -73,6 +73,5 @@ namespace MedSphere.PL.Controllers
 
         }
         #endregion
-
     }
 }

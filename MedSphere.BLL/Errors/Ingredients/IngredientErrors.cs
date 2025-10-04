@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Http;
 
 namespace MedSphere.BLL.Errors.Ingredients;
-public class IngredientsErrors
+public class IngredientErrors
 {
     public static readonly Error IngredientNotFound =
         new("Ingredient.NotFound", "No Ingredient was found with the given ID", StatusCodes.Status404NotFound);

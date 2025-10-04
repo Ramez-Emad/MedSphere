@@ -61,7 +61,7 @@ namespace MedSphere.BLL.Services.Medicines
 
             if (!givenIngredientIds.All(id => (existingIngredientIds.Contains(id))))
             {
-                return Result.Failure<MedicineResponse>(IngredientsErrors.IngredientNotFound);
+                return Result.Failure<MedicineResponse>(IngredientErrors.IngredientNotFound);
             }
 
             #endregion
@@ -126,7 +126,7 @@ namespace MedSphere.BLL.Services.Medicines
 
             if (!givenIngredientIds.All(id => (existingIngredientIds.Contains(id))))
             {
-                return Result.Failure(IngredientsErrors.IngredientNotFound);
+                return Result.Failure(IngredientErrors.IngredientNotFound);
             }
 
             #endregion
