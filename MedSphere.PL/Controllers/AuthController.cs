@@ -23,6 +23,7 @@ public class AuthController(IAuthService _authService) : ControllerBase
             : result.ToProblem();
     }
 
+
     [HttpPost("refresh")]
     public async Task<IActionResult> RefreshTokenAsync([FromBody] RefreshTokenRequest request, CancellationToken cancellationToken)
     {

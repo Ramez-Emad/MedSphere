@@ -1,6 +1,7 @@
 ﻿using MedSphere.BLL.Contracts.Medicines;
 using MedSphere.BLL.Services.Medicines;
 using MedSphere.PL.Extensions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MedSphere.PL.Controllers
@@ -31,9 +32,10 @@ namespace MedSphere.PL.Controllers
         }
 
         #endregion
-
+       
         #region Create
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult> Create(MedicineRequest medicine)
         {
             var result = await _service.AddAsync(medicine);
@@ -47,8 +49,8 @@ namespace MedSphere.PL.Controllers
         #endregion
 
         #region Update
-
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<ActionResult> Edit(int id, MedicineRequest medicine)
         {
             var result = await _service.Update(id, medicine);
@@ -61,6 +63,7 @@ namespace MedSphere.PL.Controllers
 
         #region Delete
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<ActionResult> Delete(int id)
         {
             var result = await _service.Delete(id);
