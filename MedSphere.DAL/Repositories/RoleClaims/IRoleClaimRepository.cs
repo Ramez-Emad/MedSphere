@@ -1,16 +1,11 @@
-﻿using MedSphere.DAL.Repositories._Generic;
-using Microsoft.AspNetCore.Identity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Identity;
 
 namespace MedSphere.DAL.Repositories.RoleClaims;
 
 public interface IRoleClaimRepository
 {
+    Task<IEnumerable<string>> GetAllRoleClaimsById (string roleId);
     Task AddRangeAsync(IEnumerable<IdentityRoleClaim<string>> identityRoleClaims);
-
+    void RemoveRange(string roleId, IEnumerable<string> permissionsToRemove);
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }
