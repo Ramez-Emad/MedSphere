@@ -1,9 +1,12 @@
-﻿using MedSphere.DAL.Entities.Auth;
+﻿using MedSphere.BLL.Consts;
+using MedSphere.DAL.Entities.Auth;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using System.Data;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Text.Json;
 
 
 namespace MedSphere.BLL.Services.Auth.Jwt;
@@ -12,7 +15,7 @@ public class JwtProvider(IOptions<JwtOptions> options) : IJwtProvider
 {
     private readonly JwtOptions _options = options.Value;
 
-    public (string token, int expiresIn) GenerateJwtToken(ApplicationUser applicationUser)
+    public (string token, int expiresIn) GenerateJwtToken(ApplicationUser applicationUser , IEnumerable<string> roles, IEnumerable<string> permissions)
     {
         Claim[] claims = [
             new (JwtRegisteredClaimNames.Sub, applicationUser.Id),
@@ -20,6 +23,8 @@ public class JwtProvider(IOptions<JwtOptions> options) : IJwtProvider
             new (JwtRegisteredClaimNames.GivenName, applicationUser.FirstName),
             new (JwtRegisteredClaimNames.FamilyName, applicationUser.LastName),
             new (JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+            new (nameof(roles) , JsonSerializer.Serialize(roles) , JsonClaimValueTypes.JsonArray ),
+            new (nameof(permissions) , JsonSerializer.Serialize(permissions) , JsonClaimValueTypes.JsonArray )
         ];
 
 

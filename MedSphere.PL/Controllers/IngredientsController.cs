@@ -1,8 +1,11 @@
 ﻿using MedSphere.BLL.Contracts.Ingredients;
 using MedSphere.BLL.Services.Auth.Jwt;
 using MedSphere.BLL.Services.Ingredients;
+using MedSphere.DAL.Entities.Auth;
 using MedSphere.PL.Extensions;
+using MedSphere.PL.Filters.Authentication;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MedSphere.PL.Controllers;
@@ -11,9 +14,12 @@ namespace MedSphere.PL.Controllers;
 [Authorize]
 public class IngredientsController(IIngredientService _ingredientService) : ControllerBase
 {
+
+
     #region GetAll
 
     [HttpGet]
+    [HasPermission("Ingredients:read")]
     public async Task<ActionResult> GetAll()
     {
        return Ok(await _ingredientService.GetAllAsync());

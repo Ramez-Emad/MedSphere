@@ -2,6 +2,7 @@
 using MedSphere.BLL.Contracts.Roles;
 using MedSphere.BLL.Services.Roles;
 using MedSphere.PL.Extensions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MedSphere.PL.Controllers;
@@ -37,7 +38,7 @@ public class RolesController(IRoleService _roleService) : ControllerBase
     #endregion
 
     #region Add Role
-
+   
     [HttpPost]
     public async Task<IActionResult> Create(RoleRequest request, CancellationToken cancellationToken)
     {

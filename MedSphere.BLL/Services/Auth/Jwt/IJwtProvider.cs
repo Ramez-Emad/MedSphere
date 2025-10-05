@@ -2,8 +2,8 @@
 
 namespace MedSphere.BLL.Services.Auth.Jwt;
 
-public interface IJwtProvider
+public interface  IJwtProvider
 {
-    (string token, int expiresIn) GenerateJwtToken(ApplicationUser applicationUser);
+    (string token, int expiresIn) GenerateJwtToken(ApplicationUser applicationUser, IEnumerable<string> roles, IEnumerable<string> permissions);
     public string? ValidateToken(string token);
 }

@@ -8,4 +8,6 @@ public interface IRoleClaimRepository
     Task AddRangeAsync(IEnumerable<IdentityRoleClaim<string>> identityRoleClaims);
     void RemoveRange(IEnumerable<IdentityRoleClaim<string>> identityRoleClaims);
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
+
+    Task<IEnumerable<string>> GetClaimsByRolesNameAsync(IEnumerable<string> roles);
 }

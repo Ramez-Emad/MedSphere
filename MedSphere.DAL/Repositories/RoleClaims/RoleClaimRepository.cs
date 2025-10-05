@@ -19,5 +19,17 @@ public class RoleClaimRepository(AppDbContext appDbContext) : IRoleClaimReposito
 
     public void RemoveRange(IEnumerable<IdentityRoleClaim<string>> identityRoleClaims)
         => appDbContext.RemoveRange(identityRoleClaims);
-    
+
+    public async Task<IEnumerable<string>> GetClaimsByRolesNameAsync(IEnumerable<string> roles)
+    {
+        var query =(from rc in appDbContext.RoleClaims
+                    join r in appDbContext.Roles
+                    on rc.RoleId equals r.Id
+                    where roles.Contains(r.Name!)
+                    select rc.ClaimValue)
+                    .Distinct();
+
+
+        return await query.ToListAsync();
+    }
 }
