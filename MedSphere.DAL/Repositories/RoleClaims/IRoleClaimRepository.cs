@@ -4,8 +4,8 @@ namespace MedSphere.DAL.Repositories.RoleClaims;
 
 public interface IRoleClaimRepository
 {
-    Task<IEnumerable<string>> GetAllRoleClaimsById (string roleId);
+    Task<IEnumerable<IdentityRoleClaim<string>>> GetAllRoleClaimsById (string roleId);
     Task AddRangeAsync(IEnumerable<IdentityRoleClaim<string>> identityRoleClaims);
-    void RemoveRange(string roleId, IEnumerable<string> permissionsToRemove);
+    void RemoveRange(IEnumerable<IdentityRoleClaim<string>> identityRoleClaims);
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

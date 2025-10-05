@@ -121,13 +121,6 @@ public class RoleService(RoleManager<ApplicationRole> _roleManager , IRoleClaimR
             return Result.Failure<RoleDetailResponse>(RoleErrors.RoleNotFound);
 
         #endregion
-     
-        #region Check Duplicate Role Name
-
-        if (role.Name != request.Name && (await _roleManager.FindByNameAsync(request.Name) is not null ))
-            return Result.Failure<RoleDetailResponse>(RoleErrors.DuplicatedRole);
-
-        #endregion
 
         #region Check Permessions are Exist
 
@@ -138,43 +131,51 @@ public class RoleService(RoleManager<ApplicationRole> _roleManager , IRoleClaimR
 
         #endregion
 
-        #region Update Role
+        #region Update Name and Check Duplicate Role Name
 
-        role.Name = request.Name;
-        var result = await _roleManager.UpdateAsync(role);
-
-        #endregion
-
-        #region Check Error while Adding
-
-        if (!result.Succeeded)
+        if (role.Name != request.Name)
         {
-            var error = result.Errors.First();
-            return Result.Failure<RoleDetailResponse>(new Error(
-                                                                error.Code,
-                                                                error.Description,
-                                                                StatusCodes.Status400BadRequest)
-                );
+            if ((await _roleManager.FindByNameAsync(request.Name) is not null))
+                return Result.Failure<RoleDetailResponse>(RoleErrors.DuplicatedRole);
+            else
+            {
+                role.Name = request.Name;
+                var result = await _roleManager.UpdateAsync(role);
 
+                if (!result.Succeeded)
+                {
+                    var error = result.Errors.First();
+                    return Result.Failure<RoleDetailResponse>(new Error(
+                                                                        error.Code,
+                                                                        error.Description,
+                                                                        StatusCodes.Status400BadRequest)
+                        );
+
+                }
+            }
         }
 
         #endregion
 
         #region Update role permissions
 
+        
         var oldPermissions = await _roleClaimRepository.GetAllRoleClaimsById(role.Id);
+        var oldPermissionValues = oldPermissions.Where(c => c.ClaimType == Permissions.Type).Select(c => c.ClaimValue).ToList();
 
         #region Remove Permissions
-   
-        var deleted = oldPermissions.Except(request.Permissions);
-        if (deleted.Any() )
-            _roleClaimRepository.RemoveRange(id, deleted);
+
+        var neededToRemove = oldPermissions.Where(c => c.ClaimType == Permissions.Type
+                                                && !request.Permissions.Contains(c.ClaimValue!));
+
+        if (neededToRemove.Any() )
+            _roleClaimRepository.RemoveRange(neededToRemove);
 
         #endregion
 
         #region Add New Permissions
 
-        var addedPermissions = request.Permissions.Except(oldPermissions);
+        var addedPermissions = request.Permissions.Except(oldPermissionValues);
         if (addedPermissions.Any())
         {
             var addedClaims = addedPermissions.Select(p => new IdentityRoleClaim<string>
