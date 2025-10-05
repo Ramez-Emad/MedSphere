@@ -16,7 +16,9 @@ using MedSphere.DAL.Repositories.MedicineIngredients;
 using MedSphere.DAL.Repositories.Medicines;
 using MedSphere.DAL.Repositories.RoleClaims;
 using MedSphere.PL;
+using MedSphere.PL.Filters.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -58,6 +60,7 @@ builder.Services.AddScoped<IAuthService , AuthService>();
 
 builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<IRoleClaimRepository, RoleClaimRepository>();
+
 
 #endregion
 
@@ -143,8 +146,8 @@ builder.Services.AddAuthentication(options =>
                };
            });
 
-
-
+builder.Services.AddTransient<IAuthorizationPolicyProvider, PermissionAuthorizationPolicyProvider>();
+builder.Services.AddTransient<IAuthorizationHandler, PermissionAuthorizationHandler>();
 
 #endregion
 

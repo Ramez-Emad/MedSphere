@@ -5,6 +5,7 @@ using MedSphere.BLL.Contracts.Auth;
 using MedSphere.BLL.Errors.Auth;
 using MedSphere.BLL.Services.Auth.Jwt;
 using MedSphere.DAL.Entities.Auth;
+using MedSphere.DAL.Repositories.RoleClaims;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
@@ -17,6 +18,7 @@ namespace MedSphere.BLL.Services.Auth;
 public class AuthService(
     UserManager<ApplicationUser> _userManager,
     SignInManager<ApplicationUser> _signInManager,
+    IRoleClaimRepository _roleClaimRepository,
     IJwtProvider _jwtProvider,
     ILogger<AuthService> _logger
     ) : IAuthService
@@ -36,7 +38,12 @@ public class AuthService(
 
         if(result.Succeeded)
         {
-            var (token , expiresIn) = _jwtProvider.GenerateJwtToken(user);
+            var roles =  await _userManager.GetRolesAsync(user);
+
+            var permissions = await _roleClaimRepository.GetClaimsByRolesNameAsync(roles);
+
+
+            var (token , expiresIn) = _jwtProvider.GenerateJwtToken(user ,roles , permissions);
 
             var refreshToken = new RefreshToken
             {
@@ -242,7 +249,11 @@ public class AuthService(
 
         userRefreshToken.RevokedOn = DateTime.UtcNow;
 
-        var (newToken, expiresIn) = _jwtProvider.GenerateJwtToken(user);
+        var roles = await _userManager.GetRolesAsync(user);
+
+        var permissions = await _roleClaimRepository.GetClaimsByRolesNameAsync(roles);
+
+        var (newToken, expiresIn) = _jwtProvider.GenerateJwtToken(user , roles,permissions);
         var newRefreshToken = GenerateRefreshToken();
         var refreshTokenExpiration = DateTime.UtcNow.AddDays(_refreshTokenExpiryDays);
 
