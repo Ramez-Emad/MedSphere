@@ -65,7 +65,7 @@ public class RolesController(IRoleService _roleService) : ControllerBase
 
     #region Toggle Role
 
-    [HttpDelete("{id}")]
+    [HttpPost("delete/{id}")]
     public async Task<IActionResult> Toggle(string id, CancellationToken cancellationToken)
     {
         var result = await _roleService.ToggleRoleAsync(id, cancellationToken);
