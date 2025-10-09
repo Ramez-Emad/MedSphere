@@ -10,10 +10,12 @@ namespace MedSphere.PL.Controllers;
 public class AuthController(IAuthService _authService) : ControllerBase
 {
 
+    #region Refresh Token
+
     [HttpPut("revoke-refresh-token")]
     public async Task<IActionResult> RevokeRefreshTokenAsync([FromBody] RefreshTokenRequest request, CancellationToken cancellationToken)
     {
-      
+
         var result = await _authService.RevokeRefreshTokenAsync(request, cancellationToken);
 
 
@@ -33,6 +35,11 @@ public class AuthController(IAuthService _authService) : ControllerBase
             : authResult.ToProblem();
     }
 
+
+    #endregion
+
+    #region Login
+
     [HttpPost]
     public async Task<IActionResult> LoginAsync([FromBody] AuthLoginRequest request, CancellationToken cancellationToken)
     {
@@ -43,6 +50,9 @@ public class AuthController(IAuthService _authService) : ControllerBase
                      : result.ToProblem();
     }
 
+    #endregion
+
+    #region Register
 
     [HttpPost("register")]
     public async Task<IActionResult> Register(RegisterRequest registerRequest, CancellationToken cancellationToken)
@@ -53,6 +63,10 @@ public class AuthController(IAuthService _authService) : ControllerBase
                      ? Ok()
                      : result.ToProblem();
     }
+
+    #endregion
+
+    #region Email confirmation
 
     [HttpPost("confirm-email")]
     public async Task<IActionResult> ConfirmEmail(ConfirmEmailRequest request, CancellationToken cancellationToken)
@@ -74,6 +88,11 @@ public class AuthController(IAuthService _authService) : ControllerBase
                      : result.ToProblem();
     }
 
+
+    #endregion
+
+    #region Forget Password
+
     [HttpPost("forget-password")]
     public async Task<IActionResult> ForgetPassword([FromBody] ForgetPasswordRequest request)
     {
@@ -93,4 +112,7 @@ public class AuthController(IAuthService _authService) : ControllerBase
                      ? Ok()
                      : result.ToProblem();
     }
+
+    #endregion
+
 }

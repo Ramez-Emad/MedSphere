@@ -68,7 +68,8 @@ public class RoleService(RoleManager<ApplicationRole> _roleManager , IRoleClaimR
         
         var role = new ApplicationRole
         {
-            Name = request.Name
+            Name = request.Name,
+            ConcurrencyStamp = Guid.NewGuid().ToString()
         };
 
         var result = await _roleManager.CreateAsync(role);
