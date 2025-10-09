@@ -1,4 +1,5 @@
-﻿using MedSphere.BLL.Contracts.Ingredients;
+﻿using MedSphere.BLL.Consts;
+using MedSphere.BLL.Contracts.Ingredients;
 using MedSphere.BLL.Services.Auth.Jwt;
 using MedSphere.BLL.Services.Ingredients;
 using MedSphere.DAL.Entities.Auth;
@@ -11,15 +12,12 @@ using Microsoft.AspNetCore.Mvc;
 namespace MedSphere.PL.Controllers;
 [Route("api/[controller]")]
 [ApiController]
-[Authorize]
 public class IngredientsController(IIngredientService _ingredientService) : ControllerBase
 {
-
-
     #region GetAll
 
     [HttpGet]
-    [HasPermission("Ingredients:read")]
+    [HasPermission(Permissions.GetIngredients)]
     public async Task<ActionResult> GetAll()
     {
        return Ok(await _ingredientService.GetAllAsync());
@@ -29,6 +27,7 @@ public class IngredientsController(IIngredientService _ingredientService) : Cont
     #region GetById
 
     [HttpGet("{id}")]
+    [HasPermission(Permissions.GetIngredients)]
     public async Task<ActionResult> Get(int id)
     {
         var result = await _ingredientService.GetByIdAsync(id);
@@ -42,6 +41,7 @@ public class IngredientsController(IIngredientService _ingredientService) : Cont
 
     #region Create
     [HttpPost]
+    [HasPermission(Permissions.AddIngredients)]
     public async Task<ActionResult> Create(IngredientRequest ingredient)
     {
         var result = await _ingredientService.AddAsync(ingredient);
@@ -56,6 +56,7 @@ public class IngredientsController(IIngredientService _ingredientService) : Cont
     #region Update
 
     [HttpPut("{id}")]
+    [HasPermission(Permissions.UpdateIngredients)]
     public async Task<ActionResult> Edit(int id, IngredientRequest ingredient)
     {
         var result = await _ingredientService.Update(id , ingredient);
@@ -68,6 +69,7 @@ public class IngredientsController(IIngredientService _ingredientService) : Cont
 
     #region Delete
     [HttpDelete("{id}")]
+    [HasPermission(Permissions.DeleteIngredients)]
     public async Task<ActionResult> Delete(int id)
     {
         var result = await _ingredientService.Delete(id);

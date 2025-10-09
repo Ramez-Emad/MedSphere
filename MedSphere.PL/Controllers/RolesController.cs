@@ -1,7 +1,9 @@
 ﻿using Azure.Core;
+using MedSphere.BLL.Consts;
 using MedSphere.BLL.Contracts.Roles;
 using MedSphere.BLL.Services.Roles;
 using MedSphere.PL.Extensions;
+using MedSphere.PL.Filters.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,6 +16,7 @@ public class RolesController(IRoleService _roleService) : ControllerBase
     #region GetAll
 
     [HttpGet]
+    [HasPermission(Permissions.GetRoles)]
     public async Task<ActionResult> GetAll(CancellationToken cancellationToken)
     {
         var result = await _roleService.GetAllRolesAsync(cancellationToken); 
@@ -26,6 +29,7 @@ public class RolesController(IRoleService _roleService) : ControllerBase
 
     #region Get Role
     [HttpGet("{id}")]
+    [HasPermission(Permissions.GetRoles)]
     public async Task<IActionResult> Get(string id, CancellationToken cancellationToken)
     {
         var result = await _roleService.GetRoleByIdAsync(id, cancellationToken);
@@ -40,6 +44,7 @@ public class RolesController(IRoleService _roleService) : ControllerBase
     #region Add Role
    
     [HttpPost]
+    [HasPermission(Permissions.AddRoles)]
     public async Task<IActionResult> Create(RoleRequest request, CancellationToken cancellationToken)
     {
         var result = await _roleService.AddRoleAsync(request, cancellationToken);
@@ -54,6 +59,7 @@ public class RolesController(IRoleService _roleService) : ControllerBase
     #region Update Role
 
     [HttpPost("{id}")]
+    [HasPermission(Permissions.UpdateRoles)]
     public async Task<IActionResult> Update(string id, RoleRequest request, CancellationToken cancellationToken)
     {
         var result = await _roleService.UpdateRoleAsync(id, request, cancellationToken);
@@ -67,6 +73,7 @@ public class RolesController(IRoleService _roleService) : ControllerBase
     #region Toggle Role
 
     [HttpPost("delete/{id}")]
+    [HasPermission(Permissions.DeleteRoles)]
     public async Task<IActionResult> Toggle(string id, CancellationToken cancellationToken)
     {
         var result = await _roleService.ToggleRoleAsync(id, cancellationToken);

@@ -21,6 +21,11 @@ public static class Permissions
     public const string UpdateMedicines = "Medicines:update";
     public const string DeleteMedicines = "Medicines:delete";
 
+    public const string GetRoles = "Roles:read";
+    public const string AddRoles = "Roles:add";
+    public const string UpdateRoles = "Roles:update";
+    public const string DeleteRoles = "Roles:delete";
+
     public static IList<string?> GetAllPermissions() =>
         typeof(Permissions).GetFields().Select(x => x.GetValue(x) as string).ToList();
 }
